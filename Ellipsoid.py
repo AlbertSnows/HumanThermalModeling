@@ -1,8 +1,9 @@
 import math as mt
 
-# import visualization as v
-import dictionary_surfacearea as dicsurfarea
 import numpy as np
+
+import dictionary_surfacearea as dicsurfarea
+import visualization as v
 
 
 # import timeit as timeit
@@ -31,7 +32,7 @@ a = 0.10
 b = 0.10
 c = 0.10
 # R = 0.1
-dx = dy = dz = 0.004
+dx = dy = dz = 0.08
 dr = mt.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
 
 # 1 for Yes 0 for No
@@ -57,8 +58,8 @@ for k in range(nz):
         for i in range(nx):
             voxel_count[i, j, k] = count
             count = count + 1
-            if ((i - cx) ** 2 / (a / dx) ** 2 + (j - cy) ** 2 / (b / dy) ** 2 + (k - cz) ** 2 / (c / dz) ** 2 <= 1):
-                #            if(i>(0.5*a/dx) and i<2*a/(dx) and j>(0.5*b/dx) and j<2*b/dx and k>0.5*c/dz and k<2*c/dz):
+            if (((i - cx) / (a / dx)) ** 2) + (((j - cy) / (b / dy)) ** 2) + (((k - cz) / (c / dz)) ** 2) <= 1:
+                # if(i>(0.5*a/dx) and i<2*a/(dx) and j>(0.5*b/dx) and j<2*b/dx and k>0.5*c/dz and k<2*c/dz):
                 voxel[i, j, k] = 1
 
 # Smoothening
@@ -151,6 +152,10 @@ voxel_n = nx * ny * nz
 voxel_db = np.empty((voxel_n, 26), dtype=object)
 
 v_count = 0
+print("nz", nz)
+print("ny", ny)
+print("nx", nz)
+print("v_count", v_count)
 for k in range(nz):
     for j in range(ny):
         for i in range(nx):
@@ -377,11 +382,17 @@ if (surfaceareacalc == 1):
 if (volumecalc == 1):
 
     volume = 0
+    print("voxel_n is", voxel_n)
+    print("vc is", vc)
     for vc in range(voxel_n):
         for i in range(2, 26):
-            if (voxel_db[vc, i].mat == 1):
+            # print("voxel value", voxel_db[vc, i])
+            if voxel_db[vc, i].mat == 1:
                 volume = volume + 1
-
+    if volume == 0:
+        raise ValueError('Error, 0 volume!')
+    print("Vals")
+    print(volume, dx, dy, dz)
     tetra_volume = volume * dx * dy * dz / 24
     print("\ntetra volume = ", tetra_volume)
 
