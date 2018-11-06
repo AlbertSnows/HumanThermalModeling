@@ -3,7 +3,7 @@ import math as mt
 import numpy as np
 
 import dictionary_surfacearea as dicsurfarea
-import visualization as v
+import visualization
 
 
 # import timeit as timeit
@@ -39,7 +39,7 @@ dr = mt.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
 tetramode = 1
 surfaceareacalc = 1
 volumecalc = 1
-visualization = 1
+use_visualization = 1
 
 ne = 3
 nx = int(2 * a / dx + ne)
@@ -348,8 +348,8 @@ if (tetramode == 1):
                 v_count = v_count + 1
 
 # Visualization
-if (visualization == 1):
-    v.visualize(voxel_db, side_exposed, nx, ny, nz, cx, cy, cz)
+if (use_visualization == 1):
+    visualization.visualize(voxel_db, side_exposed, nx, ny, nz, cx, cy, cz)
 
 # Calculate the surface area
 if (surfaceareacalc == 1):
@@ -383,7 +383,7 @@ if (volumecalc == 1):
 
     volume = 0
     print("voxel_n is", voxel_n)
-    print("vc is", vc)
+    # print("vc is", vc)
     for vc in range(voxel_n):
         for i in range(2, 26):
             # print("voxel value", voxel_db[vc, i])

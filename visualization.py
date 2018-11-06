@@ -21,14 +21,19 @@ def visualize(voxel_db, side_exposed, nx, ny, nz, cx, cy, cz):
         for b in range(ny):
             for a in range(nx):
                 #                if(c > cz and b > cy and a < cx):
-                if (side_exposed[a, b, c] > 0):
+                if side_exposed[a, b, c] > 0:
 
                     for i in range(2, 26):
-                        if (voxel_db[k, i].mat != 0):
-                            points.InsertNextPoint(voxel_db[k, i].p1.x, voxel_db[k, i].p1.y, voxel_db[k, i].p1.z)
-                            points.InsertNextPoint(voxel_db[k, i].p2.x, voxel_db[k, i].p2.y, voxel_db[k, i].p2.z)
-                            points.InsertNextPoint(voxel_db[k, i].p3.x, voxel_db[k, i].p3.y, voxel_db[k, i].p3.z)
-                            points.InsertNextPoint(voxel_db[k, i].p4.x, voxel_db[k, i].p4.y, voxel_db[k, i].p4.z)
+                        if voxel_db[k, i].mat != 0:
+                            # I made changes to this next bit
+                            v_db = [voxel_db[k, i].p1.x, voxel_db[k, i].p1.y, voxel_db[k, i].p1.z]
+                            points.InsertNextPoint(v_db)
+                            v_db = [voxel_db[k, i].p2.x, voxel_db[k, i].p2.y, voxel_db[k, i].p2.z]
+                            points.InsertNextPoint(v_db)
+                            v_db = [voxel_db[k, i].p3.x, voxel_db[k, i].p3.y, voxel_db[k, i].p3.z]
+                            points.InsertNextPoint(v_db)
+                            v_db = [voxel_db[k, i].p4.x, voxel_db[k, i].p4.y, voxel_db[k, i].p4.z]
+                            points.InsertNextPoint(v_db)
 
                             unstructuredGrid = vtk.vtkUnstructuredGrid()
                             unstructuredGrid.SetPoints(points)

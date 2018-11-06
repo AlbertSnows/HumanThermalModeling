@@ -73,8 +73,8 @@ for g in range(ellip.nz):
             p = a * i + b * j + c * g
             if (dom[i, j, g] == 0):
 
-                i_cor_vox.append(p);
-                j_cor_vox.append(p);
+                i_cor_vox.append(p)
+                j_cor_vox.append(p)
                 UA_vox_data.append(1.0)
                 #                UA_v[p,p] = 1.0
                 Q[p, 0] = Ta
@@ -119,26 +119,26 @@ for g in range(ellip.nz):
                     uabk = 1 / (dx * 0.5 / k + dx * 0.5 / k) * dx * dx
                     pbk = a * i + b * j + c * (g - 1)
 
-                i_cor_vox.append(p);
-                j_cor_vox.append(pr);
+                i_cor_vox.append(p)
+                j_cor_vox.append(pr)
                 UA_vox_data.append(uar)
-                i_cor_vox.append(p);
-                j_cor_vox.append(pl);
+                i_cor_vox.append(p)
+                j_cor_vox.append(pl)
                 UA_vox_data.append(ual)
-                i_cor_vox.append(p);
-                j_cor_vox.append(pt);
+                i_cor_vox.append(p)
+                j_cor_vox.append(pt)
                 UA_vox_data.append(uat)
-                i_cor_vox.append(p);
-                j_cor_vox.append(pb);
+                i_cor_vox.append(p)
+                j_cor_vox.append(pb)
                 UA_vox_data.append(uab)
-                i_cor_vox.append(p);
-                j_cor_vox.append(pf);
+                i_cor_vox.append(p)
+                j_cor_vox.append(pf)
                 UA_vox_data.append(uaf)
-                i_cor_vox.append(p);
-                j_cor_vox.append(pbk);
+                i_cor_vox.append(p)
+                j_cor_vox.append(pbk)
                 UA_vox_data.append(uabk)
-                i_cor_vox.append(p);
-                j_cor_vox.append(p);
+                i_cor_vox.append(p)
+                j_cor_vox.append(p)
                 UA_vox_data.append(-(uar + ual + uat + uab + uaf + uabk))
 
                 #                UA_v[p,pr] = uar

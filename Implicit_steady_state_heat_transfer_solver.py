@@ -1,4 +1,4 @@
-import faulthandler;
+import faulthandler
 # import scipy.sparse as sp
 import sys
 

@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ed549c4e-0cf3-4b89-8e87-0000d140266b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/HumanThermalModeling.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/HumanThermalModeling.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ellipsoid.py" beforeDir="false" afterPath="$PROJECT_DIR$/Ellipsoid.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Implicit_steady_state_heat_transfer_solver.py" beforeDir="false" afterPath="$PROJECT_DIR$/Implicit_steady_state_heat_transfer_solver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Test3D.py" beforeDir="false" afterPath="$PROJECT_DIR$/Test3D.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/visualization.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -23,65 +24,77 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="2" />
+          <entry key="py" value="215" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="2" />
+          <entry key="Python" value="215" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="2" />
+          <entry key="py" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="2" />
+          <entry key="Python" value="9" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/visualization.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="68" selection-start-line="68" selection-end-line="68" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/energy_cons.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="10" selection-start-line="10" selection-end-line="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Ellipsoid.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="43">
-              <caret line="346" selection-start-line="346" selection-end-line="346" />
-              <folding>
-                <element signature="e#0#17#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="vertical" split-proportion="0.5">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/visualization.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="105">
+                  <caret line="27" column="61" selection-start-line="27" selection-start-column="61" selection-end-line="27" selection-end-column="61" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Ellipsoid.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="1682">
+                  <caret line="417" lean-forward="true" selection-start-line="417" selection-end-line="417" />
+                  <folding>
+                    <element signature="e#0#17#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/visualization.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="154">
+                  <caret line="18" column="9" lean-forward="true" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="9" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
       <find>v.</find>
       <find>vtk</find>
       <find>volume</find>
+      <find>open</find>
+      <find>visual</find>
+      <find>v</find>
+      <find>visualization</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -91,24 +104,38 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/energy_cons.py" />
-        <option value="$PROJECT_DIR$/Test3D.py" />
         <option value="$PROJECT_DIR$/ua_matrix_generator.py" />
-        <option value="$PROJECT_DIR$/visualization.py" />
         <option value="$PROJECT_DIR$/Ellipsoid.py" />
+        <option value="$PROJECT_DIR$/Implicit_steady_state_heat_transfer_solver.py" />
+        <option value="$PROJECT_DIR$/Test3D.py" />
+        <option value="$PROJECT_DIR$/visualization.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="940" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="536" />
     <option name="y" value="21" />
-    <option name="width" value="973" />
-    <option name="height" value="776" />
+    <option name="width" value="1377" />
+    <option name="height" value="839" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="HumanThermalModeling" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HumanThermalModeling" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -184,15 +211,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="940" y="21" width="973" height="776" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.31006494" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1032666" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32888147" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.47196263" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.22342733" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.808026" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -220,37 +247,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dictionary_surfacearea.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Implicit_steady_state_heat_transfer_solver.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="20" selection-start-column="20" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Test3D.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="19" column="12" selection-start-line="19" selection-start-column="12" selection-end-line="19" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/visualization.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="68" selection-start-line="68" selection-end-line="68" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/energy_cons.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="10" selection-start-line="10" selection-end-line="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="164">
@@ -265,13 +261,48 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/energy_cons.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-289">
+          <caret line="19" column="24" lean-forward="true" selection-start-line="19" selection-start-column="24" selection-end-line="19" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Ellipsoid.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="43">
-          <caret line="346" selection-start-line="346" selection-end-line="346" />
+        <state relative-caret-position="1682">
+          <caret line="417" lean-forward="true" selection-start-line="417" selection-end-line="417" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Test3D.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-609">
+          <caret line="121" column="35" lean-forward="true" selection-start-line="121" selection-start-column="35" selection-end-line="121" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Implicit_steady_state_heat_transfer_solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dictionary_surfacearea.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="2" column="26" selection-start-line="2" selection-start-column="26" selection-end-line="2" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/visualization.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="27" column="61" selection-start-line="27" selection-start-column="61" selection-end-line="27" selection-end-column="61" />
         </state>
       </provider>
     </entry>
