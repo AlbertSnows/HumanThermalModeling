@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ed549c4e-0cf3-4b89-8e87-0000d140266b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ellipsoid.py" beforeDir="false" afterPath="$PROJECT_DIR$/Ellipsoid.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Implicit_steady_state_heat_transfer_solver.py" beforeDir="false" afterPath="$PROJECT_DIR$/Implicit_steady_state_heat_transfer_solver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test3D.py" beforeDir="false" afterPath="$PROJECT_DIR$/Test3D.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/visualization.py" afterDir="false" />
-    </list>
+    <list default="true" id="ed549c4e-0cf3-4b89-8e87-0000d140266b" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,6 +12,7 @@
     <session id="-1241419456">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.closed" value="1" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.opened" value="1" />
         </counts>
@@ -112,9 +107,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="536" />
-    <option name="y" value="21" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="402" />
+    <option name="y" value="41" />
     <option name="width" value="1377" />
     <option name="height" value="839" />
   </component>
@@ -211,15 +206,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="402" y="41" width="1377" height="839" extended-state="0" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1032666" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14637789" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32888147" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.22342733" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.29219857" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.808026" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
