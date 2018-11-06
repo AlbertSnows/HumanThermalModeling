@@ -32,14 +32,14 @@ a = 0.10
 b = 0.10
 c = 0.10
 # R = 0.1
-dx = dy = dz = 0.08
+dx = dy = dz = 0.06
 dr = mt.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
 
 # 1 for Yes 0 for No
 tetramode = 1
 surfaceareacalc = 1
 volumecalc = 1
-visualization = 0
+visualization = 1
 
 ne = 3
 nx = int(2 * a / dx + ne)
