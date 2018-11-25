@@ -1,7 +1,5 @@
 import math as mt
-
 import numpy as np
-
 import dictionary_surfacearea as dicsurfarea
 import visualization
 

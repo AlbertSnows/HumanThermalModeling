@@ -1,15 +1,10 @@
-import faulthandler;
+import faulthandler
 import math as mt
 import sys
-
-import numpy as np
-# from numpy import linalg as la
+import numpy as np  # from numpy import linalg as la
 import scipy.sparse as sp
-
 faulthandler.enable()
-
-#######################################
-
+#####################
 deci = 5
 
 

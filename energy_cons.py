@@ -1,19 +1,15 @@
 # Energy Conservation Crosscheck
-
-import faulthandler;
-
-faulthandler.enable()
-# import matplotlib
+import faulthandler
 import numpy as np
-# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import math as mt
 import Ellipsoid as ellipse
 import Test3D as vox
 import Implicit_steady_state_heat_transfer_solver as ssht
-
 # import sys
-
+# import matplotlib
+faulthandler.enable()
+# matplotlib.use('Agg')
 # t_count = 0
 voxel_mat = vox.dom
 G = ellipse.G
@@ -32,27 +28,27 @@ def perp_diffmat(vc1, t1, vc2, t2, dx, G, k1, h):
 
     # print("perp")
     # print(L)
-    return (UA_perp, L)
+    return UA_perp, L
 
 
 def side_diffmat(vc1, t1, vc2, t2, dx, G, k1, h):
     L = mt.sqrt((G[vc1, t1].x - G[vc2, t2].x) ** 2 + (G[vc1, t1].y - G[vc2, t2].y) ** 2 + (
             G[vc1, t1].z - G[vc2, t2].z) ** 2) / 2
-    UA_side = 1 / (L / k1 + 1 / h) * (0.17677 * dx ** 2)
+    us_side = 1 / (L / k1 + 1 / h) * (0.17677 * dx ** 2)
     #    global t_count
     #    t_count = t_count + 1
     # print("side")
-    return (UA_side, L)
+    return ua_side, L
 
 
 def diag_diffmat(vc1, t1, vc2, t2, dx, G, k1, h):
     L = mt.sqrt((G[vc1, t1].x - G[vc2, t2].x) ** 2 + (G[vc1, t1].y - G[vc2, t2].y) ** 2 + (
             G[vc1, t1].z - G[vc2, t2].z) ** 2) / 2
-    UA_diag = 1 / (L / k1 + 1 / h) * (0.3535 * dx ** 2)
+    ua_diag = 1 / (L / k1 + 1 / h) * (0.3535 * dx ** 2)
     #    global t_count
     #    t_count = t_count + 1
     # print("diag")
-    return (UA_diag, L)
+    return ua_diag, L
 
 
 Temp = ssht.Tdomtetra
@@ -70,13 +66,13 @@ HTC = ssht.HTC
 
 def N1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
     #    print("N1")
-    if (voxel_db[p + nx * ny, 6].mat != mat):  # S1
+    if voxel_db[p + nx * ny, 6].mat != mat:  # S1
         UA, L = perp_diffmat(p, 0, p + nx * ny, 4, dx, G, k, HTC)
         Tt = (Temp[p, 0] + HTC * L / k * ssht.Tamb) / (1 + HTC * L / k)
         Ts.append(Tt)
         q = (Temp[p, 0] - ssht.Tamb) * UA
         q_tetra.append(q)
-    if (voxel_db[p, 3].mat != mat):  # N2
+    if voxel_db[p, 3].mat != mat:  # N2
         #        # Ts.append(Temp[p,0])
         UA, L = side_diffmat(p, 0, p, 1, dx, G, k, HTC)
         Tt = (Temp[p, 0] + HTC * L / k * ssht.Tamb) / (1 + HTC * L / k)
