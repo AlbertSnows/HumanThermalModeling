@@ -2,7 +2,7 @@ import vtk
 
 
 # Visualization
-def visualize(voxel_db, side_exposed, nx, ny, nz, cx, cy, cz):
+def visualize(voxel_db, side_exposed, nx, ny, nz):
     # Create a renderer, render window, and interactor
     renderer = vtk.vtkRenderer()
     render_window = vtk.vtkRenderWindow()

@@ -26,28 +26,28 @@ def heatsolver(heat_rate, th_cond, htc, tamb):
     ny = Ellipse.ny
     nz = Ellipse.nz
 
-    n_tetra = nx * ny * nz * 24
+    # n_tetra = nx * ny * nz * 24
 
     tetra_vol = Ellipse.dx * Ellipse.dy * Ellipse.dz / 24
 
     q = tetra_vol * heat_rate
 
-    some_val_q = np.zeros((n_tetra, 1), dtype=float)
+    # some_val_q = np.zeros((n_tetra, 1), dtype=float)
 
     # Creating the UA matrix
 
     ua, some_val_q = \
         ua_m.matrixgenerator(
             voxel_db, some_val_k, htc,
-            Ellipse.dx, Ellipse.dy, Ellipse.dz, Ellipse.voxel_n, Ellipse.G,
-            nx, ny, nz, q, some_val_q, tamb)
+            Ellipse.dx, Ellipse.G,
+            nx, ny, nz, q, tamb)
 
     return ua, some_val_q
 
 
 Heat_rate = 1000
 HTC = 2.0
-k = 0.3
+k_val = 0.3
 Tamb = 20.0
 
 UA, Q = heatsolver(Heat_rate, k, HTC, Tamb)

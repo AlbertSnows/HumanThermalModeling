@@ -6,49 +6,50 @@ import math as mt
 import Ellipsoid as Ellipse
 import Test3D as Vox
 import Implicit_steady_state_heat_transfer_solver as steadyStateHeatTransfer
+
 # import sys
 # import matplotlib
 faulthandler.enable()
 # matplotlib.use('Agg')
 # t_count = 0
 voxel_mat = Vox.dom
-G = Ellipse.G
+outer_g = Ellipse.G
 ua_test_voxel = Vox.UA_v
 ua_test_tetra = steadyStateHeatTransfer.UA  # .todense()
 Q_test_tetra = steadyStateHeatTransfer.Q
 Q_test_voxel = Vox.Q
 
 
-def perp_diffmat(vc1, t1, vc2, t2, dx, G, k1, h):
-    L = mt.sqrt((G[vc1, t1].x - G[vc2, t2].x) ** 2 + (G[vc1, t1].y - G[vc2, t2].y) ** 2 + (
-            G[vc1, t1].z - G[vc2, t2].z) ** 2) / 2
-    ua_perp = 1 / (L / k1 + 1 / h) * (0.25 * dx ** 2)
+def perp_diffmat(vc1, t1, vc2, t2, dx, g, k1, h):
+    l_val = mt.sqrt((g[vc1, t1].x - g[vc2, t2].x) ** 2 + (g[vc1, t1].y - g[vc2, t2].y) ** 2 + (
+            g[vc1, t1].z - g[vc2, t2].z) ** 2) / 2
+    ua_perp = 1 / (l_val / k1 + 1 / h) * (0.25 * dx ** 2)
     #    global t_count
     #    t_count = t_count + 1
 
     # print("perp")
-    # print(L)
-    return ua_perp, L
+    # print(l_val)
+    return ua_perp, l_val
 
 
-def side_diffmat(vc1, t1, vc2, t2, dx, G, k1, h):
-    L = mt.sqrt((G[vc1, t1].x - G[vc2, t2].x) ** 2 + (G[vc1, t1].y - G[vc2, t2].y) ** 2 + (
-            G[vc1, t1].z - G[vc2, t2].z) ** 2) / 2
-    us_side = 1 / (L / k1 + 1 / h) * (0.17677 * dx ** 2)
+def side_diffmat(vc1, t1, vc2, t2, dx, inner_g, k1, h):
+    l_val = mt.sqrt((inner_g[vc1, t1].x - inner_g[vc2, t2].x) ** 2 + (inner_g[vc1, t1].y - inner_g[vc2, t2].y) ** 2 + (
+            inner_g[vc1, t1].z - inner_g[vc2, t2].z) ** 2) / 2
+    us_side = 1 / (l_val / k1 + 1 / h) * (0.17677 * dx ** 2)
     #    global t_count
     #    t_count = t_count + 1
     # print("side")
-    return us_side, L
+    return us_side, l_val
 
 
-def diag_diffmat(vc1, t1, vc2, t2, dx, G, k1, h):
-    L = mt.sqrt((G[vc1, t1].x - G[vc2, t2].x) ** 2 + (G[vc1, t1].y - G[vc2, t2].y) ** 2 + (
-            G[vc1, t1].z - G[vc2, t2].z) ** 2) / 2
-    ua_diag = 1 / (L / k1 + 1 / h) * (0.3535 * dx ** 2)
+def diag_diffmat(vc1, t1, vc2, t2, dx, inner_g, k1, h):
+    l_val = mt.sqrt((inner_g[vc1, t1].x - inner_g[vc2, t2].x) ** 2 + (inner_g[vc1, t1].y - inner_g[vc2, t2].y) ** 2 + (
+            inner_g[vc1, t1].z - inner_g[vc2, t2].z) ** 2) / 2
+    ua_diag = 1 / (l_val / k1 + 1 / h) * (0.3535 * dx ** 2)
     #    global t_count
     #    t_count = t_count + 1
     # print("diag")
-    return ua_diag, L
+    return ua_diag, l_val
 
 
 Temp = steadyStateHeatTransfer.Tdomtetra
@@ -60,836 +61,836 @@ Tsv = []
 q_tetra = []
 q_vox = []
 
-k = steadyStateHeatTransfer.k
-HTC = steadyStateHeatTransfer.HTC
+outer_k = steadyStateHeatTransfer.k_val
+outer_htc = steadyStateHeatTransfer.HTC
 
 
-def N1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def n1(voxel_db, p, nx, ny, dx, mat, k_val, htc):
     #    print("N1")
     if voxel_db[p + nx * ny, 6].mat != mat:  # S1
-        ua, L = perp_diffmat(p, 0, p + nx * ny, 4, dx, G, k, HTC)
-        Tt = (Temp[p, 0] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 0] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 3].mat != mat:  # N2
+        ua, l_val = perp_diffmat(p, 0, p + nx * ny, 4, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 0] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 0] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 3].mat != mat:  # n2
         #        # Ts.append(Temp[p,0])
-        ua, L = side_diffmat(p, 0, p, 1, dx, G, k, HTC)
-        Tt = (Temp[p, 0] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 0] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 5].mat != mat:  # N4
+        ua, l_val = side_diffmat(p, 0, p, 1, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 0] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 0] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 5].mat != mat:  # n4
         #        # Ts.append(Temp[p,0])
-        ua, L = side_diffmat(p, 0, p, 3, dx, G, k, HTC)
-        Tt = (Temp[p, 0] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 0] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 22].mat != mat:  # B4
+        ua, l_val = side_diffmat(p, 0, p, 3, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 0] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 0] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 22].mat != mat:  # b4
         #        # Ts.append(Temp[p,0])
-        ua, L = side_diffmat(p, 0, p, 20, dx, G, k, HTC)
-        Tt = (Temp[p, 0] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 0] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = side_diffmat(p, 0, p, 20, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 0] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 0] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def N2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def n2(voxel_db, p, nx, ny, dx, mat, k_val, htc):
     #    print("N2")
     if voxel_db[p + nx * ny, 7].mat != mat:  # S2
         #        # Ts.append(Temp[p,1])
-        ua, L = perp_diffmat(p, 1, p + nx * ny, 5, dx, G, k, HTC)
-        Tt = (Temp[p, 1] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 1] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 4].mat != mat:  # N3
+        ua, l_val = perp_diffmat(p, 1, p + nx * ny, 5, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 1] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 1] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 4].mat != mat:  # n3
         #        # Ts.append(Temp[p,1])
-        ua, L = side_diffmat(p, 1, p, 2, dx, G, k, HTC)
-        Tt = (Temp[p, 1] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 1] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 2].mat != mat:  # N1
+        ua, l_val = side_diffmat(p, 1, p, 2, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 1] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 1] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 2].mat != mat:  # n1
         #        # Ts.append(Temp[p,1])
-        ua, L = side_diffmat(p, 1, p, 0, dx, G, k, HTC)
-        Tt = (Temp[p, 1] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 1] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 10].mat != mat:  # W1
+        ua, l_val = side_diffmat(p, 1, p, 0, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 1] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 1] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 10].mat != mat:  # w1
         #        # Ts.append(Temp[p,1])
-        ua, L = diag_diffmat(p, 1, p, 8, dx, G, k, HTC)
-        Tt = (Temp[p, 1] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 1] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 1, p, 8, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 1] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 1] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def N3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def n3(voxel_db, p, nx, ny, dx, mat, k_val, htc):
     #    print("N3")
     if voxel_db[p + nx * ny, 8].mat != mat:  # S3
         #        # Ts.append(Temp[p,2])
-        ua, L = perp_diffmat(p, 2, p + nx * ny, 6, dx, G, k, HTC)
-        Tt = (Temp[p, 2] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 2] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 5].mat != mat:  # N4
+        ua, l_val = perp_diffmat(p, 2, p + nx * ny, 6, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 2] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 2] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 5].mat != mat:  # n4
         #        # Ts.append(Temp[p,2])
-        ua, L = side_diffmat(p, 2, p, 3, dx, G, k, HTC)
-        Tt = (Temp[p, 2] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 2] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 3].mat != mat:  # N2
+        ua, l_val = side_diffmat(p, 2, p, 3, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 2] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 2] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 3].mat != mat:  # n2
         #        # Ts.append(Temp[p,2])
-        ua, L = side_diffmat(p, 2, p, 1, dx, G, k, HTC)
-        Tt = (Temp[p, 2] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 2] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 18].mat != mat:  # F1
+        ua, l_val = side_diffmat(p, 2, p, 1, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 2] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 2] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 18].mat != mat:  # f1
         #        # Ts.append(Temp[p,2])
-        ua, L = diag_diffmat(p, 2, p, 16, dx, G, k, HTC)
-        Tt = (Temp[p, 2] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 2] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 2, p, 16, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 2] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 2] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def N4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def n4(voxel_db, p, nx, ny, dx, mat, k_val, htc):
     #    print("N4")
     if voxel_db[p + nx * ny, 9].mat != mat:  # S4
         # # Ts.append(Temp[p,3])
-        ua, L = perp_diffmat(p, 3, p + nx * ny, 7, dx, G, k, HTC)
-        Tt = (Temp[p, 3] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 3] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 2].mat != mat):  # N1
+        ua, l_val = perp_diffmat(p, 3, p + nx * ny, 7, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 3] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 3] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 2].mat != mat:  # n1
         # # Ts.append(Temp[p,3])
-        ua, L = side_diffmat(p, 3, p, 0, dx, G, k, HTC)
-        Tt = (Temp[p, 3] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 3] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 4].mat != mat):  # N3
+        ua, l_val = side_diffmat(p, 3, p, 0, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 3] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 3] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 4].mat != mat:  # n3
         # Ts.append(Temp[p,3])
-        ua, L = side_diffmat(p, 3, p, 2, dx, G, k, HTC)
-        Tt = (Temp[p, 3] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 3] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 14].mat != mat):  # E1
+        ua, l_val = side_diffmat(p, 3, p, 2, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 3] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 3] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 14].mat != mat:  # E1
         # Ts.append(Temp[p,3])
-        ua, L = diag_diffmat(p, 3, p, 12, dx, G, k, HTC)
-        Tt = (Temp[p, 3] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 3] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 3, p, 12, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 3] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 3] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def S1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def s1(voxel_db, p, nx, ny, dx, mat, k_val, htc):
     #    print("S1")
-    if (voxel_db[p - nx * ny, 2].mat != mat):  # N1
+    if voxel_db[p - nx * ny, 2].mat != mat:  # n1
         # Ts.append(Temp[p,4])
-        ua, L = perp_diffmat(p, 4, p - nx * ny, 0, dx, G, k, HTC)
-        Tt = (Temp[p, 4] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 4] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 9].mat != mat):  # S4
+        ua, l_val = perp_diffmat(p, 4, p - nx * ny, 0, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 4] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 4] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 9].mat != mat:  # s4
         # Ts.append(Temp[p,4])
-        ua, L = side_diffmat(p, 4, p, 7, dx, G, k, HTC)
-        Tt = (Temp[p, 4] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 4] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 7].mat != mat):  # S2
+        ua, l_val = side_diffmat(p, 4, p, 7, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 4] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 4] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 7].mat != mat:  # s2
         # Ts.append(Temp[p,4])
-        ua, L = side_diffmat(p, 4, p, 5, dx, G, k, HTC)
-        Tt = (Temp[p, 4] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 4] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 24].mat != mat):  # B3
+        ua, l_val = side_diffmat(p, 4, p, 5, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 4] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 4] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 24].mat != mat:  # b3
         # Ts.append(Temp[p,4])
-        ua, L = diag_diffmat(p, 4, p, 22, dx, G, k, HTC)
-        Tt = (Temp[p, 4] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 4] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 4, p, 22, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 4] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 4] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def S2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def s2(voxel_db, p, nx, ny, dx, mat, k_val, htc):
     #    print("S2")
-    if (voxel_db[p - nx * ny, 3].mat != mat):  # N2
+    if voxel_db[p - nx * ny, 3].mat != mat:  # n2
         # Ts.append(Temp[p,5])
-        ua, L = perp_diffmat(p, 5, p - nx * ny, 1, dx, G, k, HTC)
-        Tt = (Temp[p, 5] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 5] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 9].mat != mat):  # S4
+        ua, l_val = perp_diffmat(p, 5, p - nx * ny, 1, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 5] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 5] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 9].mat != mat:  # s4
         # Ts.append(Temp[p,5])
-        ua, L = side_diffmat(p, 5, p, 7, dx, G, k, HTC)
-        Tt = (Temp[p, 5] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 5] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 8].mat != mat):  # S3
+        ua, l_val = side_diffmat(p, 5, p, 7, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 5] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 5] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 8].mat != mat:  # s3
         # Ts.append(Temp[p,5])
-        ua, L = side_diffmat(p, 5, p, 6, dx, G, k, HTC)
-        Tt = (Temp[p, 5] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 5] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 12].mat != mat):  # W3
+        ua, l_val = side_diffmat(p, 5, p, 6, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 5] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 5] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 12].mat != mat:  # w3
         # Ts.append(Temp[p,5])
-        ua, L = diag_diffmat(p, 5, p, 10, dx, G, k, HTC)
-        Tt = (Temp[p, 5] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 5] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 5, p, 10, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 5] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 5] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def S3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def s3(voxel_db, p, nx, ny, dx, mat, k_val, htc):
     #    print("S3")
-    if (voxel_db[p - nx * ny, 4].mat != mat):  # N3
+    if voxel_db[p - nx * ny, 4].mat != mat:  # n3
         # Ts.append(Temp[p,6])
-        ua, L = perp_diffmat(p, 6, p - nx * ny, 2, dx, G, k, HTC)
-        Tt = (Temp[p, 6] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 6] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 9].mat != mat):  # S4
+        ua, l_val = perp_diffmat(p, 6, p - nx * ny, 2, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 6] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 6] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 9].mat != mat:  # s4
         # Ts.append(Temp[p,6])
-        ua, L = side_diffmat(p, 6, p, 7, dx, G, k, HTC)
-        Tt = (Temp[p, 6] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 6] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 7].mat != mat):  # S2
+        ua, l_val = side_diffmat(p, 6, p, 7, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 6] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 6] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 7].mat != mat:  # s2
         # Ts.append(Temp[p,6])
-        ua, L = side_diffmat(p, 6, p, 5, dx, G, k, HTC)
-        Tt = (Temp[p, 6] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 6] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 20].mat != mat):  # F3
+        ua, l_val = side_diffmat(p, 6, p, 5, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 6] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 6] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 20].mat != mat:  # f3
         # Ts.append(Temp[p,6])
-        ua, L = diag_diffmat(p, 6, p, 18, dx, G, k, HTC)
-        q = (Temp[p, 6] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 6, p, 18, dx, outer_g, k_val, htc)
+        inner_q = (Temp[p, 6] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def S4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def s4(voxel_db, p, nx, ny, dx, mat, k_val, htc):
     #    print("S4")
-    if (voxel_db[p - nx * ny, 5].mat != mat):  # N4
+    if voxel_db[p - nx * ny, 5].mat != mat:  # n4
         # Ts.append(Temp[p,7])
-        ua, L = perp_diffmat(p, 7, p - nx * ny, 3, dx, G, k, HTC)
-        Tt = (Temp[p, 7] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 7] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 6].mat != mat):  # S1
+        ua, l_val = perp_diffmat(p, 7, p - nx * ny, 3, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 7] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 7] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 6].mat != mat:  # s1
         # Ts.append(Temp[p,7])
-        ua, L = side_diffmat(p, 7, p, 4, dx, G, k, HTC)
-        Tt = (Temp[p, 7] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 7] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 8].mat != mat):  # S3
+        ua, l_val = side_diffmat(p, 7, p, 4, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 7] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 7] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 8].mat != mat:  # s3
         # Ts.append(Temp[p,7])
-        ua, L = side_diffmat(p, 7, p, 6, dx, G, k, HTC)
-        Tt = (Temp[p, 7] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 7] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 16].mat != mat):  # E3
+        ua, l_val = side_diffmat(p, 7, p, 6, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 7] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 7] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 16].mat != mat:  # E3
         # Ts.append(Temp[p,7])
-        ua, L = diag_diffmat(p, 7, p, 14, dx, G, k, HTC)
-        Tt = (Temp[p, 7] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 7] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 7, p, 14, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 7] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 7] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def W1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def w1(voxel_db, p, ny, dx, mat, k_val, htc):
     #    print("W1")
-    if (voxel_db[p - ny, 14].mat != mat):  # E1
+    if voxel_db[p - ny, 14].mat != mat:  # E1
         # Ts.append(Temp[p,8])
-        ua, L = perp_diffmat(p, 8, p - ny, 12, dx, G, k, HTC)
-        Tt = (Temp[p, 8] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 8] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 11].mat != mat):  # W2
+        ua, l_val = perp_diffmat(p, 8, p - ny, 12, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 8] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 8] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 11].mat != mat:  # w2
         # Ts.append(Temp[p,8])
-        ua, L = side_diffmat(p, 8, p, 9, dx, G, k, HTC)
-        Tt = (Temp[p, 8] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 8] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 13].mat != mat):  # W4
+        ua, l_val = side_diffmat(p, 8, p, 9, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 8] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 8] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 13].mat != mat:  # w4
         # Ts.append(Temp[p,8])
-        ua, L = side_diffmat(p, 8, p, 11, dx, G, k, HTC)
-        Tt = (Temp[p, 8] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 8] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 3].mat != mat):  # N2
+        ua, l_val = side_diffmat(p, 8, p, 11, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 8] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 8] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 3].mat != mat:  # n2
         # Ts.append(Temp[p,8])
-        ua, L = diag_diffmat(p, 8, p, 1, dx, G, k, HTC)
-        Tt = (Temp[p, 8] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 8] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 8, p, 1, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 8] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 8] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def W2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def w2(voxel_db, p, ny, dx, mat, k_val, htc):
     #    print("W2")
-    if (voxel_db[p - ny, 17].mat != mat):  # E4
+    if voxel_db[p - ny, 17].mat != mat:  # E4
         # Ts.append(Temp[p,9])
-        ua, L = perp_diffmat(p, 9, p - ny, 15, dx, G, k, HTC)
-        Tt = (Temp[p, 9] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 9] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 12].mat != mat):  # W3
+        ua, l_val = perp_diffmat(p, 9, p - ny, 15, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 9] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 9] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 12].mat != mat:  # w3
         # Ts.append(Temp[p,9])
-        ua, L = side_diffmat(p, 9, p, 10, dx, G, k, HTC)
-        Tt = (Temp[p, 9] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 9] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 10].mat != mat):  # W1
+        ua, l_val = side_diffmat(p, 9, p, 10, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 9] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 9] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 10].mat != mat:  # w1
         # Ts.append(Temp[p,9])
-        ua, L = side_diffmat(p, 9, p, 8, dx, G, k, HTC)
-        Tt = (Temp[p, 9] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 9] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 25].mat != mat):  # B4
+        ua, l_val = side_diffmat(p, 9, p, 8, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 9] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 9] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 25].mat != mat:  # b4
         # Ts.append(Temp[p,9])
-        ua, L = diag_diffmat(p, 9, p, 23, dx, G, k, HTC)
-        Tt = (Temp[p, 9] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 9] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 9, p, 23, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 9] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 9] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def W3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def w3(voxel_db, p, ny, dx, mat, k_val, htc):
     #    print("W3")
-    if (voxel_db[p - ny, 16].mat != mat):  # E3
+    if voxel_db[p - ny, 16].mat != mat:  # E3
         # Ts.append(Temp[p,10])
-        ua, L = perp_diffmat(p, 10, p - ny, 14, dx, G, k, HTC)
-        Tt = (Temp[p, 10] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 10] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 13].mat != mat):  # W4
+        ua, l_val = perp_diffmat(p, 10, p - ny, 14, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 10] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 10] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 13].mat != mat:  # w4
         # Ts.append(Temp[p,10])
-        ua, L = side_diffmat(p, 10, p, 11, dx, G, k, HTC)
-        Tt = (Temp[p, 10] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 10] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 11].mat != mat):  # W2
+        ua, l_val = side_diffmat(p, 10, p, 11, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 10] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 10] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 11].mat != mat:  # w2
         # Ts.append(Temp[p,10])
-        ua, L = side_diffmat(p, 10, p, 9, dx, G, k, HTC)
-        Tt = (Temp[p, 10] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 10] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 7].mat != mat):  # S2
+        ua, l_val = side_diffmat(p, 10, p, 9, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 10] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 10] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 7].mat != mat:  # s2
         # Ts.append(Temp[p,10])
-        ua, L = diag_diffmat(p, 10, p, 5, dx, G, k, HTC)
-        Tt = (Temp[p, 10] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 10] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 10, p, 5, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 10] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 10] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def W4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def w4(voxel_db, p, ny, dx, mat, k_val, htc):
     #    print("W4")
-    if (voxel_db[p - ny, 15].mat != mat):  # E2
+    if voxel_db[p - ny, 15].mat != mat:  # E2
         # Ts.append(Temp[p,11])
-        ua, L = perp_diffmat(p, 11, p - ny, 13, dx, G, k, HTC)
-        Tt = (Temp[p, 11] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 11] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 10].mat != mat):  # W1
+        ua, l_val = perp_diffmat(p, 11, p - ny, 13, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 11] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 11] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 10].mat != mat:  # w1
         # Ts.append(Temp[p,11])
-        ua, L = side_diffmat(p, 11, p, 8, dx, G, k, HTC)
-        Tt = (Temp[p, 11] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 11] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 12].mat != mat):  # W3
+        ua, l_val = side_diffmat(p, 11, p, 8, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 11] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 11] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 12].mat != mat:  # w3
         # Ts.append(Temp[p,11])
-        ua, L = side_diffmat(p, 11, p, 10, dx, G, k, HTC)
-        Tt = (Temp[p, 11] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 11] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 19].mat != mat):  # F2
+        ua, l_val = side_diffmat(p, 11, p, 10, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 11] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 11] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 19].mat != mat:  # f2
         # Ts.append(Temp[p,11])
-        ua, L = diag_diffmat(p, 11, p, 17, dx, G, k, HTC)
-        Tt = (Temp[p, 11] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 11] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 11, p, 17, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 11] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 11] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def E1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def e1(voxel_db, p, ny, dx, mat, k_val, htc):
     #    print("E1")
-    if (voxel_db[p + ny, 10].mat != mat):  # W1
+    if voxel_db[p + ny, 10].mat != mat:  # w1
         # Ts.append(Temp[p,12])
-        ua, L = perp_diffmat(p, 12, p + ny, 8, dx, G, k, HTC)
-        Tt = (Temp[p, 12] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 12] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 15].mat != mat):  # E2
+        ua, l_val = perp_diffmat(p, 12, p + ny, 8, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 12] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 12] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 15].mat != mat:  # e2
         # Ts.append(Temp[p,12])
-        ua, L = side_diffmat(p, 12, p, 13, dx, G, k, HTC)
-        Tt = (Temp[p, 12] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 12] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 17].mat != mat):  # E4
+        ua, l_val = side_diffmat(p, 12, p, 13, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 12] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 12] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 17].mat != mat:  # e4
         # Ts.append(Temp[p,12])
-        ua, L = side_diffmat(p, 12, p, 15, dx, G, k, HTC)
-        Tt = (Temp[p, 12] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 12] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 5].mat != mat):  # N4
+        ua, l_val = side_diffmat(p, 12, p, 15, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 12] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 12] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 5].mat != mat:  # n4
         # Ts.append(Temp[p,12])
-        ua, L = diag_diffmat(p, 12, p, 3, dx, G, k, HTC)
-        Tt = (Temp[p, 12] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 12] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 12, p, 3, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 12] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 12] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def E2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def e2(voxel_db, p, ny, dx, mat, k_val, htc):
     #    print("E2")
-    if (voxel_db[p + ny, 13].mat != mat):  # W4
+    if voxel_db[p + ny, 13].mat != mat:  # w4
         # Ts.append(Temp[p,13])
-        ua, L = perp_diffmat(p, 13, p + ny, 11, dx, G, k, HTC)
-        Tt = (Temp[p, 13] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 13] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 16].mat != mat):  # E3
+        ua, l_val = perp_diffmat(p, 13, p + ny, 11, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 13] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 13] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 16].mat != mat:  # e3
         # Ts.append(Temp[p,13])
-        ua, L = side_diffmat(p, 13, p, 14, dx, G, k, HTC)
-        Tt = (Temp[p, 13] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 13] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 14].mat != mat):  # E1
+        ua, l_val = side_diffmat(p, 13, p, 14, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 13] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 13] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 14].mat != mat:  # e1
         # Ts.append(Temp[p,13])
-        ua, L = side_diffmat(p, 13, p, 12, dx, G, k, HTC)
-        Tt = (Temp[p, 13] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 13] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 21].mat != mat):  # F4
+        ua, l_val = side_diffmat(p, 13, p, 12, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 13] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 13] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 21].mat != mat:  # f4
         # Ts.append(Temp[p,13])
-        ua, L = diag_diffmat(p, 13, p, 19, dx, G, k, HTC)
-        Tt = (Temp[p, 13] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 13] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 13, p, 19, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 13] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 13] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def E3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def e3(voxel_db, p, ny, dx, mat, k_val, htc):
     #    print("E3")
-    if (voxel_db[p + ny, 12].mat != mat):  # W3
+    if voxel_db[p + ny, 12].mat != mat:  # w3
         # Ts.append(Temp[p,14])
-        ua, L = perp_diffmat(p, 14, p + ny, 10, dx, G, k, HTC)
-        Tt = (Temp[p, 14] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 14] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 17].mat != mat):  # E4
+        ua, l_val = perp_diffmat(p, 14, p + ny, 10, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 14] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 14] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 17].mat != mat:  # e4
         # Ts.append(Temp[p,14])
-        ua, L = side_diffmat(p, 14, p, 15, dx, G, k, HTC)
-        Tt = (Temp[p, 14] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 14] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 15].mat != mat):  # E2
+        ua, l_val = side_diffmat(p, 14, p, 15, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 14] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 14] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 15].mat != mat:  # e2
         # Ts.append(Temp[p,14])
-        ua, L = side_diffmat(p, 14, p, 13, dx, G, k, HTC)
-        Tt = (Temp[p, 14] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 14] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 9].mat != mat):  # S4
+        ua, l_val = side_diffmat(p, 14, p, 13, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 14] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 14] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 9].mat != mat:  # s4
         # Ts.append(Temp[p,14])
-        ua, L = diag_diffmat(p, 14, p, 7, dx, G, k, HTC)
-        Tt = (Temp[p, 14] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 14] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 14, p, 7, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 14] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 14] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def E4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def e4(voxel_db, p, ny, dx, mat, k_val, htc):
     #    print("E4")
-    if (voxel_db[p + ny, 11].mat != mat):  # W2
+    if voxel_db[p + ny, 11].mat != mat:  # w2
         # Ts.append(Temp[p,15])
-        ua, L = perp_diffmat(p, 15, p + ny, 9, dx, G, k, HTC)
-        Tt = (Temp[p, 15] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 15] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 14].mat != mat):  # E1
+        ua, l_val = perp_diffmat(p, 15, p + ny, 9, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 15] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 15] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 14].mat != mat:  # e1
         # Ts.append(Temp[p,15])
-        ua, L = side_diffmat(p, 15, p, 12, dx, G, k, HTC)
-        Tt = (Temp[p, 15] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 15] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 16].mat != mat):  # E3
+        ua, l_val = side_diffmat(p, 15, p, 12, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 15] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 15] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 16].mat != mat:  # e3
         # Ts.append(Temp[p,15])
-        ua, L = side_diffmat(p, 15, p, 14, dx, G, k, HTC)
-        Tt = (Temp[p, 15] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 15] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 23].mat != mat):  # B2
+        ua, l_val = side_diffmat(p, 15, p, 14, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 15] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 15] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 23].mat != mat:  # b2
         # Ts.append(Temp[p,15])
-        ua, L = diag_diffmat(p, 15, p, 21, dx, G, k, HTC)
-        Tt = (Temp[p, 15] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 15] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 15, p, 21, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 15] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 15] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def F1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def f1(voxel_db, p, dx, mat, k_val, htc):
     #    print("F1")
-    if (voxel_db[p + 1, 22].mat != mat):  # B1
+    if voxel_db[p + 1, 22].mat != mat:  # b1
         # Ts.append(Temp[p,16])
-        ua, L = perp_diffmat(p, 16, p + 1, 20, dx, G, k, HTC)
-        Tt = (Temp[p, 16] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 16] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 19].mat != mat):  # F2
+        ua, l_val = perp_diffmat(p, 16, p + 1, 20, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 16] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 16] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 19].mat != mat:  # f2
         # Ts.append(Temp[p,16])
-        ua, L = side_diffmat(p, 16, p, 17, dx, G, k, HTC)
-        Tt = (Temp[p, 16] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 16] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 21].mat != mat):  # F4
+        ua, l_val = side_diffmat(p, 16, p, 17, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 16] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 16] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 21].mat != mat:  # f4
         # Ts.append(Temp[p,16])
-        ua, L = side_diffmat(p, 16, p, 19, dx, G, k, HTC)
-        Tt = (Temp[p, 16] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 16] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 4].mat != mat):  # N3
+        ua, l_val = side_diffmat(p, 16, p, 19, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 16] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 16] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 4].mat != mat:  # n3
         # Ts.append(Temp[p,16])
-        ua, L = diag_diffmat(p, 16, p, 2, dx, G, k, HTC)
-        Tt = (Temp[p, 16] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 16] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 16, p, 2, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 16] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 16] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def F2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def f2(voxel_db, p, dx, mat, k_val, htc):
     #    print("F2")
-    if (voxel_db[p + 1, 25].mat != mat):  # B4
+    if voxel_db[p + 1, 25].mat != mat:  # b4
         # Ts.append(Temp[p,17])
-        ua, L = perp_diffmat(p, 17, p + 1, 23, dx, G, k, HTC)
-        Tt = (Temp[p, 17] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 17] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 20].mat != mat):  # F3
+        ua, l_val = perp_diffmat(p, 17, p + 1, 23, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 17] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 17] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 20].mat != mat:  # f3
         # Ts.append(Temp[p,17])
-        ua, L = side_diffmat(p, 17, p, 18, dx, G, k, HTC)
-        Tt = (Temp[p, 17] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 17] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 18].mat != mat):  # F1
+        ua, l_val = side_diffmat(p, 17, p, 18, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 17] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 17] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 18].mat != mat:  # f1
         # Ts.append(Temp[p,17])
-        ua, L = side_diffmat(p, 17, p, 16, dx, G, k, HTC)
-        Tt = (Temp[p, 17] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 17] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 13].mat != mat):  # W4
+        ua, l_val = side_diffmat(p, 17, p, 16, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 17] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 17] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 13].mat != mat:  # w4
         # Ts.append(Temp[p,17])
-        ua, L = diag_diffmat(p, 17, p, 11, dx, G, k, HTC)
-        Tt = (Temp[p, 17] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 17] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 17, p, 11, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 17] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 17] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def F3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def f3(voxel_db, p, dx, mat, k_val, htc):
     #    print("F3")
-    if (voxel_db[p + 1, 24].mat != mat):  # B3
+    if voxel_db[p + 1, 24].mat != mat:  # b3
         # Ts.append(Temp[p,18])
-        ua, L = perp_diffmat(p, 18, p + 1, 22, dx, G, k, HTC)
-        Tt = (Temp[p, 18] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 18] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 21].mat != mat):  # F4
+        ua, l_val = perp_diffmat(p, 18, p + 1, 22, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 18] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 18] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 21].mat != mat:  # f4
         # Ts.append(Temp[p,18])
-        ua, L = side_diffmat(p, 18, p, 19, dx, G, k, HTC)
-        Tt = (Temp[p, 18] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 18] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 19].mat != mat):  # F2
+        ua, l_val = side_diffmat(p, 18, p, 19, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 18] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 18] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 19].mat != mat:  # f2
         # Ts.append(Temp[p,18])
-        ua, L = side_diffmat(p, 18, p, 17, dx, G, k, HTC)
-        Tt = (Temp[p, 18] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 18] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 8].mat != mat):  # S3
+        ua, l_val = side_diffmat(p, 18, p, 17, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 18] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 18] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 8].mat != mat:  # s3
         # Ts.append(Temp[p,18])
-        ua, L = diag_diffmat(p, 18, p, 6, dx, G, k, HTC)
-        Tt = (Temp[p, 18] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 18] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 18, p, 6, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 18] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 18] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def F4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def f4(voxel_db, p, dx, mat, k_val, htc):
     #    print("F4")
-    if (voxel_db[p + 1, 23].mat != mat):  # B2
+    if voxel_db[p + 1, 23].mat != mat:  # b2
         # Ts.append(Temp[p,19])
-        ua, L = perp_diffmat(p, 19, p + 1, 21, dx, G, k, HTC)
-        Tt = (Temp[p, 19] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 19] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 18].mat != mat):  # F1
+        ua, l_val = perp_diffmat(p, 19, p + 1, 21, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 19] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 19] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 18].mat != mat:  # f1
         # Ts.append(Temp[p,19])
-        ua, L = side_diffmat(p, 19, p, 16, dx, G, k, HTC)
-        Tt = (Temp[p, 19] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 19] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 20].mat != mat):  # F3
+        ua, l_val = side_diffmat(p, 19, p, 16, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 19] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 19] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 20].mat != mat:  # f3
         # Ts.append(Temp[p,19])
-        ua, L = side_diffmat(p, 19, p, 18, dx, G, k, HTC)
-        Tt = (Temp[p, 19] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 19] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 15].mat != mat):  # E2
+        ua, l_val = side_diffmat(p, 19, p, 18, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 19] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 19] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 15].mat != mat:  # e2
         # Ts.append(Temp[p,19])
-        ua, L = diag_diffmat(p, 19, p, 13, dx, G, k, HTC)
-        Tt = (Temp[p, 19] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 19] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 19, p, 13, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 19] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 19] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def B1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def b1(voxel_db, p, dx, mat, k_val, htc):
     #    print("B1")
-    if (voxel_db[p - 1, 18].mat != mat):  # F1
+    if voxel_db[p - 1, 18].mat != mat:  # f1
         # Ts.append(Temp[p,20])
-        ua, L = perp_diffmat(p, 20, p - 1, 16, dx, G, k, HTC)
-        Tt = (Temp[p, 20] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 20] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 23].mat != mat):  # B2
+        ua, l_val = perp_diffmat(p, 20, p - 1, 16, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 20] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 20] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 23].mat != mat:  # b2
         # Ts.append(Temp[p,20])
-        ua, L = side_diffmat(p, 20, p, 21, dx, G, k, HTC)
-        Tt = (Temp[p, 20] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 20] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 25].mat != mat):  # B4
+        ua, l_val = side_diffmat(p, 20, p, 21, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 20] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 20] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 25].mat != mat:  # b4
         # Ts.append(Temp[p,20])
-        ua, L = side_diffmat(p, 20, p, 23, dx, G, k, HTC)
-        Tt = (Temp[p, 20] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 20] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if (voxel_db[p, 2].mat != mat):  # N1
+        ua, l_val = side_diffmat(p, 20, p, 23, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 20] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 20] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 2].mat != mat:  # n1
         # Ts.append(Temp[p,20])
-        ua, L = diag_diffmat(p, 20, p, 0, dx, G, k, HTC)
-        Tt = (Temp[p, 20] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 20] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 20, p, 0, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 20] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 20] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def B2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def b2(voxel_db, p, dx, mat, k_val, htc):
     #    print("B2")
-    if voxel_db[p - 1, 21].mat != mat:  # F4
+    if voxel_db[p - 1, 21].mat != mat:  # f4
         # Ts.append(Temp[p,21])
-        ua, L = perp_diffmat(p, 21, p - 1, 19, dx, G, k, HTC)
-        Tt = (Temp[p, 21] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 21] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 24].mat != mat:  # B3
+        ua, l_val = perp_diffmat(p, 21, p - 1, 19, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 21] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 21] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 24].mat != mat:  # b3
         # Ts.append(Temp[p,21])
-        ua, L = side_diffmat(p, 21, p, 22, dx, G, k, HTC)
-        Tt = (Temp[p, 21] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 21] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 22].mat != mat:  # B1
+        ua, l_val = side_diffmat(p, 21, p, 22, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 21] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 21] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 22].mat != mat:  # b1
         # Ts.append(Temp[p,21])
-        ua, L = side_diffmat(p, 21, p, 20, dx, G, k, HTC)
-        Tt = (Temp[p, 21] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 21] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = side_diffmat(p, 21, p, 20, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 21] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 21] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
     if voxel_db[p, 17].mat != mat:  # E4
         # Ts.append(Temp[p,21])
-        ua, L = diag_diffmat(p, 21, p, 15, dx, G, k, HTC)
-        Tt = (Temp[p, 21] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 21] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 21, p, 15, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 21] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 21] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def B3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def b3(voxel_db, p, dx, mat, k_val, htc):
     #    print("B3")
-    if voxel_db[p - 1, 20].mat != mat:  # F3
+    if voxel_db[p - 1, 20].mat != mat:  # f3
         # Ts.append(Temp[p,22])
-        ua, L = perp_diffmat(p, 22, p - 1, 18, dx, G, k, HTC)
-        Tt = (Temp[p, 22] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 22] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 25].mat != mat:  # B4
+        ua, l_val = perp_diffmat(p, 22, p - 1, 18, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 22] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 22] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 25].mat != mat:  # b4
         # Ts.append(Temp[p,22])
-        ua, L = side_diffmat(p, 22, p, 23, dx, G, k, HTC)
-        Tt = (Temp[p, 22] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 22] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 23].mat != mat:  # B2
+        ua, l_val = side_diffmat(p, 22, p, 23, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 22] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 22] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 23].mat != mat:  # b2
         # Ts.append(Temp[p,22])
-        ua, L = side_diffmat(p, 22, p, 21, dx, G, k, HTC)
-        Tt = (Temp[p, 22] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 22] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 6].mat != mat:  # S3
+        ua, l_val = side_diffmat(p, 22, p, 21, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 22] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 22] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 6].mat != mat:  # s3
         # Ts.append(Temp[p,22])
-        ua, L = diag_diffmat(p, 22, p, 4, dx, G, k, HTC)
-        Tt = (Temp[p, 22] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 22] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 22, p, 4, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 22] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 22] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def B4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def b4(voxel_db, p, dx, mat, k_val, htc):
     #    print("B4")
-    if voxel_db[p - 1, 19].mat != mat:  # F2
+    if voxel_db[p - 1, 19].mat != mat:  # f2
         # Ts.append(Temp[p,23])
-        ua, L = perp_diffmat(p, 23, p - 1, 17, dx, G, k, HTC)
-        Tt = (Temp[p, 23] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 23] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 22].mat != mat:  # B1
+        ua, l_val = perp_diffmat(p, 23, p - 1, 17, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 23] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 23] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 22].mat != mat:  # b1
         # Ts.append(Temp[p,23])
-        ua, L = side_diffmat(p, 23, p, 20, dx, G, k, HTC)
-        Tt = (Temp[p, 23] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 23] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 24].mat != mat:  # B3
+        ua, l_val = side_diffmat(p, 23, p, 20, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 23] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 23] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 24].mat != mat:  # b3
         # Ts.append(Temp[p,23])
-        ua, L = side_diffmat(p, 23, p, 22, dx, G, k, HTC)
-        Tt = (Temp[p, 23] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 23] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
-    if voxel_db[p, 11].mat != mat:  # W2
+        ua, l_val = side_diffmat(p, 23, p, 22, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 23] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 23] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
+    if voxel_db[p, 11].mat != mat:  # w2
         # Ts.append(Temp[p,23])
-        ua, L = diag_diffmat(p, 23, p, 9, dx, G, k, HTC)
-        Tt = (Temp[p, 23] + HTC * L / k * steadyStateHeatTransfer.Tamb) / (1 + HTC * L / k)
-        Ts.append(Tt)
-        q = (Temp[p, 23] - steadyStateHeatTransfer.Tamb) * ua
-        q_tetra.append(q)
+        ua, l_val = diag_diffmat(p, 23, p, 9, dx, outer_g, k_val, htc)
+        tt_val = (Temp[p, 23] + htc * l_val / k * steadyStateHeatTransfer.Tamb) / (1 + htc * l_val / k)
+        Ts.append(tt_val)
+        inner_q = (Temp[p, 23] - steadyStateHeatTransfer.Tamb) * ua
+        q_tetra.append(inner_q)
 
 
-def func(tag, voxel_db, p, nx, ny, nz, dx, mat, k, HTC):
+def func(tag, voxel_db, p, nx, ny, nz, dx, mat, k_val, htc):
     if tag == 'N1':
-        N1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        n1(voxel_db, p, nx, ny, dx, mat, k_val, htc)
     elif tag == 'N2':
-        N2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        n2(voxel_db, p, nx, ny, dx, mat, k_val, htc)
     elif tag == 'N3':
-        N3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        n3(voxel_db, p, nx, ny, dx, mat, k_val, htc)
     elif tag == 'N4':
-        N4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        n4(voxel_db, p, nx, ny, dx, mat, k_val, htc)
 
     elif tag == 'S1':
-        S1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        s1(voxel_db, p, nx, ny, dx, mat, k_val, htc)
     elif tag == 'S2':
-        S2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        s2(voxel_db, p, nx, ny, dx, mat, k_val, htc)
     elif tag == 'S3':
-        S3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        s3(voxel_db, p, nx, ny, dx, mat, k_val, htc)
     elif tag == 'S4':
-        S4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        s4(voxel_db, p, nx, ny, dx, mat, k_val, htc)
 
     elif tag == 'W1':
-        W1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        w1(voxel_db, p, ny, dx, mat, k_val, htc)
     elif tag == 'W2':
-        W2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        w2(voxel_db, p, ny, dx, mat, k_val, htc)
     elif tag == 'W3':
-        W3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        w3(voxel_db, p, ny, dx, mat, k_val, htc)
     elif tag == 'W4':
-        W4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        w4(voxel_db, p, ny, dx, mat, k_val, htc)
 
     elif tag == 'E1':
-        E1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        e1(voxel_db, p, ny, dx, mat, k_val, htc)
     elif tag == 'E2':
-        E2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        e2(voxel_db, p, ny, dx, mat, k_val, htc)
     elif tag == 'E3':
-        E3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        e3(voxel_db, p, ny, dx, mat, k_val, htc)
     elif tag == 'E4':
-        E4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        e4(voxel_db, p, ny, dx, mat, k_val, htc)
 
     elif tag == 'F1':
-        F1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        f1(voxel_db, p, dx, mat, k_val, htc)
     elif tag == 'F2':
-        F2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        f2(voxel_db, p, dx, mat, k_val, htc)
     elif tag == 'F3':
-        F3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        f3(voxel_db, p, dx, mat, k_val, htc)
     elif tag == 'F4':
-        F4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        f4(voxel_db, p, dx, mat, k_val, htc)
 
     elif tag == 'B1':
-        B1(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        b1(voxel_db, p, dx, mat, k_val, htc)
     elif tag == 'B2':
-        B2(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        b2(voxel_db, p, dx, mat, k_val, htc)
     elif tag == 'B3':
-        B3(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        b3(voxel_db, p, dx, mat, k_val, htc)
     elif tag == 'B4':
-        B4(voxel_db, p, nx, ny, nz, dx, mat, k, HTC)
+        b4(voxel_db, p, dx, mat, k_val, htc)
 
 
 for vc in range(Ellipse.voxel_n):
     for i in range(24):
         if Ellipse.voxel_db[vc, i + 2].mat != 0:
             func(Ellipse.voxel_db[vc, i + 2].pos, Ellipse.voxel_db, vc, Ellipse.nx, Ellipse.ny, Ellipse.nz, Ellipse.dx,
-                 Ellipse.voxel_db[vc, i + 2].mat, steadyStateHeatTransfer.k, steadyStateHeatTransfer.HTC)
+                 Ellipse.voxel_db[vc, i + 2].mat, steadyStateHeatTransfer.k_val, steadyStateHeatTransfer.HTC)
 
 Tsa = steadyStateHeatTransfer.Heat_rate * Ellipse.a / (3 * steadyStateHeatTransfer.HTC) + steadyStateHeatTransfer.Tamb
 # plt.plot(Ts)
@@ -913,13 +914,16 @@ for k in range(Vox.n):
         for i in range(Vox.n):
             if Vox.dom[i, j, k] == 1:
                 if Vox.side_exposed[i, j, k] > 0:
-                    Ttv = (Vox.Tdom[i, j, k] + (steadyStateHeatTransfer.HTC * (Ellipse.dx / 2) / steadyStateHeatTransfer.k) * steadyStateHeatTransfer.Tamb) / (
-                            1 + steadyStateHeatTransfer.HTC * (Ellipse.dx / 2) / steadyStateHeatTransfer.k)
-                    Tsv.append(Ttv)
-                    errv.append(Tsa - Ttv)
-                    ua = 1 / (0.5 * Ellipse.dx / steadyStateHeatTransfer.k + 1 / steadyStateHeatTransfer.HTC) * Ellipse.dx * Ellipse.dx
-                    q = Vox.side_exposed[i, j, k] * ua * (Vox.Tdom[i, j, k] - steadyStateHeatTransfer.Tamb)
-                    q_vox.append(q)
+                    tt_valv = (Vox.Tdom[i, j, k] + (steadyStateHeatTransfer.HTC * (
+                                Ellipse.dx / 2) / steadyStateHeatTransfer.k_val) * steadyStateHeatTransfer.Tamb) / (
+                                      1 + steadyStateHeatTransfer.HTC * (Ellipse.dx / 2) / steadyStateHeatTransfer.k_val)
+                    Tsv.append(tt_valv)
+                    errv.append(Tsa - tt_valv)
+                    outer_ua = \
+                        1 / (0.5 * Ellipse.dx / steadyStateHeatTransfer.k_val + 1 / steadyStateHeatTransfer.HTC) \
+                        * Ellipse.dx * Ellipse.dx
+                    outer_q = Vox.side_exposed[i, j, k] * outer_ua * (Vox.Tdom[i, j, k] - steadyStateHeatTransfer.Tamb)
+                    q_vox.append(outer_q)
 
 data = [error, errv]
 labels = ["Tetrahedrons", "Voxels"]
@@ -948,7 +952,7 @@ for i in range(len(Tsv)):
 plt.subplot(122)
 # plt.plot(x_t,Ts,label = "Tetra")
 # plt.plot(x_v,Tsv,label = "Voxel")
-plt.axhline(np.mean(Ts), label="Mean Tetra", color="Green")
+plt.axhline(np.mean(Ts), label="Mean Tetra", color="g_valreen")
 plt.axhline(np.mean(Tsv), label="Mean Voxel", color="Purple")
 plt.axhline(Tsa, color="red", label="Analytical")
 plt.yticks(np.arange(steadyStateHeatTransfer.Tamb - 2, Tsa + 2, 2))
@@ -966,12 +970,15 @@ print("Tetrahedron error =", steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_v
 print("Heart rate = ", steadyStateHeatTransfer.Heat_rate)
 print("tetra_volume = ", Ellipse.tetra_volume)
 print("percentage error = ",
-      (steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume - np.sum(q_tetra)) / (steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume) * 100, "%")
-print("Tetra T_surf for given", steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume / (Ellipse.areasum1 * steadyStateHeatTransfer.HTC) + steadyStateHeatTransfer.Tamb)
+      (steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume - np.sum(q_tetra)) / (
+                  steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume) * 100, "%")
+print("Tetra T_surf for given", steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume / (
+            Ellipse.areasum1 * steadyStateHeatTransfer.HTC) + steadyStateHeatTransfer.Tamb)
 
 print("voxel error =", steadyStateHeatTransfer.Heat_rate * Ellipse.voxel_volume - np.sum(q_vox), "W")
 print("Voxel heat error percentage =",
-      (steadyStateHeatTransfer.Heat_rate * Ellipse.voxel_volume - np.sum(q_vox)) / steadyStateHeatTransfer.Heat_rate * Ellipse.voxel_volume * 100, "%")
+      (steadyStateHeatTransfer.Heat_rate * Ellipse.voxel_volume - np.sum(
+          q_vox)) / steadyStateHeatTransfer.Heat_rate * Ellipse.voxel_volume * 100, "%")
 
 print("\nActual tetra Q = ", steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume)
 print("Tetra Q =  ", np.sum(q_tetra))

@@ -67,19 +67,19 @@ side_exposed = np.copy(voxel)
 for k in range(nz):
     for j in range(ny):
         for i in range(nx):
-            if (voxel[i, j, k] != 0):
+            if voxel[i, j, k] != 0:
                 count = 0
-                if (voxel[i - 1, j, k] == 0):
+                if voxel[i - 1, j, k] == 0:
                     count = count + 1
-                if (voxel[i + 1, j, k] == 0):
+                if voxel[i + 1, j, k] == 0:
                     count = count + 1
-                if (voxel[i, j - 1, k] == 0):
+                if voxel[i, j - 1, k] == 0:
                     count = count + 1
-                if (voxel[i, j + 1, k] == 0):
+                if voxel[i, j + 1, k] == 0:
                     count = count + 1
-                if (voxel[i, j, k - 1] == 0):
+                if voxel[i, j, k - 1] == 0:
                     count = count + 1
-                if (voxel[i, j, k + 1] == 0):
+                if voxel[i, j, k + 1] == 0:
                     count = count + 1
                 side_exposed[i, j, k] = count
 
@@ -87,7 +87,7 @@ for k in range(nz):
 for k in range(nz):
     for j in range(ny):
         for i in range(nx):
-            if (side_exposed[i, j, k] == 5):
+            if side_exposed[i, j, k] == 5:
                 voxel[i, j, k] = 0
                 side_exposed[i, j, k] = 0
 
@@ -95,19 +95,19 @@ for k in range(nz):
 for k in range(nz):
     for j in range(ny):
         for i in range(nx):
-            if (voxel[i, j, k] != 0):
+            if voxel[i, j, k] != 0:
                 count = 0
-                if (voxel[i - 1, j, k] == 0):
+                if voxel[i - 1, j, k] == 0:
                     count = count + 1
-                if (voxel[i + 1, j, k] == 0):
+                if voxel[i + 1, j, k] == 0:
                     count = count + 1
-                if (voxel[i, j - 1, k] == 0):
+                if voxel[i, j - 1, k] == 0:
                     count = count + 1
-                if (voxel[i, j + 1, k] == 0):
+                if voxel[i, j + 1, k] == 0:
                     count = count + 1
-                if (voxel[i, j, k - 1] == 0):
+                if voxel[i, j, k - 1] == 0:
                     count = count + 1
-                if (voxel[i, j, k + 1] == 0):
+                if voxel[i, j, k + 1] == 0:
                     count = count + 1
                 side_exposed[i, j, k] = count
 
@@ -177,7 +177,7 @@ for k in range(nz):
                            round((k * dz - dz / 2.0), decimal))
             H = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
                            round((k * dz - dz / 2.0), decimal))
-            I = Coordinate(round((i * dx), decimal), round(j * dy, decimal), round(k * dz, decimal))
+            I_val = Coordinate(round((i * dx), decimal), round(j * dy, decimal), round(k * dz, decimal))
             Nc = Coordinate(round(i * dx, decimal), round(j * dy, decimal), round((k * dz + dz / 2.0), decimal))
             Sc = Coordinate(round(i * dx, decimal), round(j * dy, decimal), round((k * dz - dz / 2.0), decimal))
             Wc = Coordinate(round(i * dx, decimal), round((j * dy - dy / 2.0), decimal), round(k * dz, decimal))
@@ -188,40 +188,40 @@ for k in range(nz):
 
             # North Tetras
 
-            voxel_db[v_count, 2] = Tetra(Nc, A, B, I, mat_tag, 'N1')  # N1 coordinates 2
-            voxel_db[v_count, 3] = Tetra(Nc, B, C, I, mat_tag, 'N2')  # N2 coordinates 3
-            voxel_db[v_count, 4] = Tetra(Nc, C, D, I, mat_tag, 'N3')  # N3 coordinates 4
-            voxel_db[v_count, 5] = Tetra(Nc, D, A, I, mat_tag, 'N4')  # N4 coordinates 5
+            voxel_db[v_count, 2] = Tetra(Nc, A, B, I_val, mat_tag, 'N1')  # N1 coordinates 2
+            voxel_db[v_count, 3] = Tetra(Nc, B, C, I_val, mat_tag, 'N2')  # N2 coordinates 3
+            voxel_db[v_count, 4] = Tetra(Nc, C, D, I_val, mat_tag, 'N3')  # N3 coordinates 4
+            voxel_db[v_count, 5] = Tetra(Nc, D, A, I_val, mat_tag, 'N4')  # N4 coordinates 5
 
             # South Tetras
-            voxel_db[v_count, 6] = Tetra(Sc, E, F, I, mat_tag, 'S1')  # S1 coordinates 6
-            voxel_db[v_count, 7] = Tetra(Sc, F, G, I, mat_tag, 'S2')  # S2 coordinates 7
-            voxel_db[v_count, 8] = Tetra(Sc, G, H, I, mat_tag, 'S3')  # S3 coordinates 8
-            voxel_db[v_count, 9] = Tetra(Sc, H, E, I, mat_tag, 'S4')  # S4 coordinates 9
+            voxel_db[v_count, 6] = Tetra(Sc, E, F, I_val, mat_tag, 'S1')  # S1 coordinates 6
+            voxel_db[v_count, 7] = Tetra(Sc, F, G, I_val, mat_tag, 'S2')  # S2 coordinates 7
+            voxel_db[v_count, 8] = Tetra(Sc, G, H, I_val, mat_tag, 'S3')  # S3 coordinates 8
+            voxel_db[v_count, 9] = Tetra(Sc, H, E, I_val, mat_tag, 'S4')  # S4 coordinates 9
 
             # West Tetras
-            voxel_db[v_count, 10] = Tetra(Wc, C, B, I, mat_tag, 'W1')  # W1 coordinates 10
-            voxel_db[v_count, 11] = Tetra(Wc, B, F, I, mat_tag, 'W2')  # W2 coordinates 11
-            voxel_db[v_count, 12] = Tetra(Wc, F, G, I, mat_tag, 'W3')  # W3 coordinates 12
-            voxel_db[v_count, 13] = Tetra(Wc, G, C, I, mat_tag, 'W4')  # W4 coordinates 13
+            voxel_db[v_count, 10] = Tetra(Wc, C, B, I_val, mat_tag, 'W1')  # W1 coordinates 10
+            voxel_db[v_count, 11] = Tetra(Wc, B, F, I_val, mat_tag, 'W2')  # W2 coordinates 11
+            voxel_db[v_count, 12] = Tetra(Wc, F, G, I_val, mat_tag, 'W3')  # W3 coordinates 12
+            voxel_db[v_count, 13] = Tetra(Wc, G, C, I_val, mat_tag, 'W4')  # W4 coordinates 13
 
             # East Tetras
-            voxel_db[v_count, 14] = Tetra(Ec, A, D, I, mat_tag, 'E1')  # E1 coordinates 14
-            voxel_db[v_count, 15] = Tetra(Ec, D, H, I, mat_tag, 'E2')  # E2 coordinates 15
-            voxel_db[v_count, 16] = Tetra(Ec, H, E, I, mat_tag, 'E3')  # E3 coordinates 16
-            voxel_db[v_count, 17] = Tetra(Ec, E, A, I, mat_tag, 'E4')  # E4 coordinates 17
+            voxel_db[v_count, 14] = Tetra(Ec, A, D, I_val, mat_tag, 'E1')  # E1 coordinates 14
+            voxel_db[v_count, 15] = Tetra(Ec, D, H, I_val, mat_tag, 'E2')  # E2 coordinates 15
+            voxel_db[v_count, 16] = Tetra(Ec, H, E, I_val, mat_tag, 'E3')  # E3 coordinates 16
+            voxel_db[v_count, 17] = Tetra(Ec, E, A, I_val, mat_tag, 'E4')  # E4 coordinates 17
 
             # Front Tetras
-            voxel_db[v_count, 18] = Tetra(Fc, D, C, I, mat_tag, 'F1')  # F1 coordinates 18
-            voxel_db[v_count, 19] = Tetra(Fc, C, G, I, mat_tag, 'F2')  # F2 coordinates 19
-            voxel_db[v_count, 20] = Tetra(Fc, G, H, I, mat_tag, 'F3')  # F3 coordinates 20
-            voxel_db[v_count, 21] = Tetra(Fc, H, D, I, mat_tag, 'F4')  # F4 coordinates 21
+            voxel_db[v_count, 18] = Tetra(Fc, D, C, I_val, mat_tag, 'F1')  # F1 coordinates 18
+            voxel_db[v_count, 19] = Tetra(Fc, C, G, I_val, mat_tag, 'F2')  # F2 coordinates 19
+            voxel_db[v_count, 20] = Tetra(Fc, G, H, I_val, mat_tag, 'F3')  # F3 coordinates 20
+            voxel_db[v_count, 21] = Tetra(Fc, H, D, I_val, mat_tag, 'F4')  # F4 coordinates 21
 
             # Back Tetras
-            voxel_db[v_count, 22] = Tetra(Bc, B, A, I, mat_tag, 'B1')  # B1 coordinates 22
-            voxel_db[v_count, 23] = Tetra(Bc, A, E, I, mat_tag, 'B2')  # B2 coordinates 23
-            voxel_db[v_count, 24] = Tetra(Bc, E, F, I, mat_tag, 'B3')  # B3 coordinates 24
-            voxel_db[v_count, 25] = Tetra(Bc, F, B, I, mat_tag, 'B4')  # B4 coordinates 25
+            voxel_db[v_count, 22] = Tetra(Bc, B, A, I_val, mat_tag, 'B1')  # B1 coordinates 22
+            voxel_db[v_count, 23] = Tetra(Bc, A, E, I_val, mat_tag, 'B2')  # B2 coordinates 23
+            voxel_db[v_count, 24] = Tetra(Bc, E, F, I_val, mat_tag, 'B3')  # B3 coordinates 24
+            voxel_db[v_count, 25] = Tetra(Bc, F, B, I_val, mat_tag, 'B4')  # B4 coordinates 25
 
             v_count = v_count + 1
 
@@ -239,127 +239,127 @@ for vc in range(voxel_n):
         G[vc, i] = Coordinate(gx, gy, gz)
 
 # Triangle smoothening
-if (tetramode == 1):
+if tetramode == 1:
     v_count = 0
     for k in range(nz):
         for j in range(ny):
             for i in range(nx):
                 # Three Sides Exposed
-                if (side_exposed[i, j, k] > 1):
+                if side_exposed[i, j, k] > 1:
 
                     # North Side
-                    if (voxel[i, j, k + 1] == 0):
+                    if voxel[i, j, k + 1] == 0:
                         voxel_db[v_count, 2].mat = 0
                         voxel_db[v_count, 3].mat = 0
                         voxel_db[v_count, 4].mat = 0
                         voxel_db[v_count, 5].mat = 0
 
-                        if (side_exposed[i, j + 1, k] > 1):
+                        if side_exposed[i, j + 1, k] > 1:
                             voxel_db[v_count, 14].mat = 0
-                        if (side_exposed[i, j - 1, k] > 1):
+                        if side_exposed[i, j - 1, k] > 1:
                             voxel_db[v_count, 10].mat = 0
-                        if (side_exposed[i + 1, j, k] > 1):
+                        if side_exposed[i + 1, j, k] > 1:
                             voxel_db[v_count, 18].mat = 0
-                        if (side_exposed[i - 1, j, k] > 1):
+                        if side_exposed[i - 1, j, k] > 1:
                             voxel_db[v_count, 22].mat = 0
 
                     # South Side
-                    if (voxel[i, j, k - 1] == 0):
+                    if voxel[i, j, k - 1] == 0:
                         voxel_db[v_count, 6].mat = 0
                         voxel_db[v_count, 7].mat = 0
                         voxel_db[v_count, 8].mat = 0
                         voxel_db[v_count, 9].mat = 0
 
-                        if (side_exposed[i, j + 1, k] > 1):
+                        if side_exposed[i, j + 1, k] > 1:
                             voxel_db[v_count, 16].mat = 0
-                        if (side_exposed[i, j - 1, k] > 1):
+                        if side_exposed[i, j - 1, k] > 1:
                             voxel_db[v_count, 12].mat = 0
-                        if (side_exposed[i + 1, j, k] > 1):
+                        if side_exposed[i + 1, j, k] > 1:
                             voxel_db[v_count, 20].mat = 0
-                        if (side_exposed[i - 1, j, k] > 1):
+                        if side_exposed[i - 1, j, k] > 1:
                             voxel_db[v_count, 24].mat = 0
 
                     # West Side
-                    if (voxel[i, j - 1, k] == 0):
+                    if voxel[i, j - 1, k] == 0:
                         voxel_db[v_count, 10].mat = 0
                         voxel_db[v_count, 11].mat = 0
                         voxel_db[v_count, 12].mat = 0
                         voxel_db[v_count, 13].mat = 0
 
-                        if (side_exposed[i, j, k + 1] > 1):
+                        if side_exposed[i, j, k + 1] > 1:
                             voxel_db[v_count, 3].mat = 0
-                        if (side_exposed[i, j, k - 1] > 1):
+                        if side_exposed[i, j, k - 1] > 1:
                             voxel_db[v_count, 7].mat = 0
-                        if (side_exposed[i + 1, j, k] > 1):
+                        if side_exposed[i + 1, j, k] > 1:
                             voxel_db[v_count, 19].mat = 0
-                        if (side_exposed[i - 1, j, k] > 1):
+                        if side_exposed[i - 1, j, k] > 1:
                             voxel_db[v_count, 25].mat = 0
 
                     # East Side
-                    if (voxel[i, j + 1, k] == 0):
+                    if voxel[i, j + 1, k] == 0:
                         voxel_db[v_count, 14].mat = 0
                         voxel_db[v_count, 15].mat = 0
                         voxel_db[v_count, 16].mat = 0
                         voxel_db[v_count, 17].mat = 0
 
-                        if (side_exposed[i, j, k + 1] > 1):
+                        if side_exposed[i, j, k + 1] > 1:
                             voxel_db[v_count, 5].mat = 0
-                        if (side_exposed[i, j, k - 1] > 1):
+                        if side_exposed[i, j, k - 1] > 1:
                             voxel_db[v_count, 9].mat = 0
-                        if (side_exposed[i + 1, j, k] > 1):
+                        if side_exposed[i + 1, j, k] > 1:
                             voxel_db[v_count, 21].mat = 0
-                        if (side_exposed[i - 1, j, k] > 1):
+                        if side_exposed[i - 1, j, k] > 1:
                             voxel_db[v_count, 23].mat = 0
 
                     # Front Side
-                    if (voxel[i + 1, j, k] == 0):
+                    if voxel[i + 1, j, k] == 0:
                         voxel_db[v_count, 18].mat = 0
                         voxel_db[v_count, 19].mat = 0
                         voxel_db[v_count, 20].mat = 0
                         voxel_db[v_count, 21].mat = 0
 
-                        if (side_exposed[i, j + 1, k] > 1):
+                        if side_exposed[i, j + 1, k] > 1:
                             voxel_db[v_count, 15].mat = 0
-                        if (side_exposed[i, j - 1, k] > 1):
+                        if side_exposed[i, j - 1, k] > 1:
                             voxel_db[v_count, 13].mat = 0
-                        if (side_exposed[i, j, k + 1] > 1):
+                        if side_exposed[i, j, k + 1] > 1:
                             voxel_db[v_count, 4].mat = 0
-                        if (side_exposed[i, j, k - 1] > 1):
+                        if side_exposed[i, j, k - 1] > 1:
                             voxel_db[v_count, 8].mat = 0
 
                     # Back Side
-                    if (voxel[i - 1, j, k] == 0):
+                    if voxel[i - 1, j, k] == 0:
                         voxel_db[v_count, 22].mat = 0
                         voxel_db[v_count, 23].mat = 0
                         voxel_db[v_count, 24].mat = 0
                         voxel_db[v_count, 25].mat = 0
 
-                        if (side_exposed[i, j + 1, k] > 1):
+                        if side_exposed[i, j + 1, k] > 1:
                             voxel_db[v_count, 17].mat = 0
-                        if (side_exposed[i, j - 1, k] > 1):
+                        if side_exposed[i, j - 1, k] > 1:
                             voxel_db[v_count, 11].mat = 0
-                        if (side_exposed[i, j, k + 1] > 1):
+                        if side_exposed[i, j, k + 1] > 1:
                             voxel_db[v_count, 2].mat = 0
-                        if (side_exposed[i, j, k - 1] > 1):
+                        if side_exposed[i, j, k - 1] > 1:
                             voxel_db[v_count, 6].mat = 0
 
                 v_count = v_count + 1
 
 # Visualization
-if (use_visualization == 1):
-    visualization.visualize(voxel_db, side_exposed, nx, ny, nz, cx, cy, cz)
+if use_visualization == 1:
+    visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
 
 # Calculate the surface area
-if (surfaceareacalc == 1):
+if surfaceareacalc == 1:
 
     d = 0
     areasum1 = 0.0
     for k in range(nz):
         for j in range(ny):
             for i in range(nx):
-                if (side_exposed[i, j, k] != 0):
+                if side_exposed[i, j, k] != 0:
                     for m in range(2, 26):
-                        if (voxel_db[d, m].mat != 0):
+                        if voxel_db[d, m].mat != 0:
                             areasum1 = areasum1 + dicsurfarea.func(voxel_db[d, m].pos, voxel_db, d, nx, ny, nz, dx,
                                                                    voxel_db[d, m].mat)
                 d = d + 1
@@ -369,7 +369,7 @@ if (surfaceareacalc == 1):
     for k in range(nz):
         for j in range(ny):
             for i in range(nx):
-                if (voxel[i, j, k] == 1):
+                if voxel[i, j, k] == 1:
                     voxelarea = side_exposed[i, j, k] + voxelarea
     actualarea = 4 * mt.pi * (((a * b) ** 1.6 + (a * c) ** 1.6 + (b * c) ** 1.6) / 3.0) ** (1 / 1.6)
     print("Actual Area = ", actualarea)
@@ -377,7 +377,7 @@ if (surfaceareacalc == 1):
     print("voxel area = ", voxelarea)
 
 # Calculate volume
-if (volumecalc == 1):
+if volumecalc == 1:
 
     volume = 0
     print("voxel_n is", voxel_n)
@@ -398,7 +398,7 @@ if (volumecalc == 1):
     for k in range(nz):
         for j in range(ny):
             for i in range(nx):
-                if (voxel[i, j, k] == 1):
+                if voxel[i, j, k] == 1:
                     voxel_volume = voxel_volume + dx * dy * dz
 
     print("voxel volume = ", voxel_volume)
@@ -415,4 +415,4 @@ if (volumecalc == 1):
 # Steady State Heat Transfer Solver
 
 def voxeldatabase():
-    return (voxel_db, voxel, dx, dy, dz, voxel_n, G)
+    return voxel_db, voxel, dx, dy, dz, voxel_n, G
