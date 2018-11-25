@@ -1,47 +1,48 @@
 import faulthandler
-# import scipy.sparse as sp
 import sys
-
 import numpy as np
-# import xlsxwriter as xl
-# from numpy import linalg as la
 import scipy.sparse.linalg as spla
-
-import Ellipsoid as ellipse
-# matplotlib.use('Agg')
+import Ellipsoid as Ellipse
 import ua_matrix_generator as ua_m
 
+# import scipy.sparse as sp
+# import xlsxwriter as xl
+# from numpy import linalg as la
+# matplotlib.use('Agg')
 faulthandler.enable()
 
 
-def Heatsolver(Heat_rate, Th_cond, HTC, Tamb):
-    voxel_db = ellipse.voxel_db
+def heatsolver(heat_rate, th_cond, htc, tamb):
+    voxel_db = Ellipse.voxel_db
 
-    K = np.zeros((ellipse.voxel_n, 24), dtype=float)
+    some_val_k = np.zeros((Ellipse.voxel_n, 24), dtype=float)
 
-    for vc in range(ellipse.voxel_n):
-        for i in range(24):
-            if (voxel_db[vc, (i + 2)].mat != 0):
-                K[vc, i] = Th_cond
+    for voxel_n_element in range(Ellipse.voxel_n):
+        for number in range(24):
+            if voxel_db[voxel_n_element, (number + 2)].mat != 0:
+                some_val_k[voxel_n_element, number] = th_cond
 
-    nx = ellipse.nx
-    ny = ellipse.ny
-    nz = ellipse.nz
+    nx = Ellipse.nx
+    ny = Ellipse.ny
+    nz = Ellipse.nz
 
     n_tetra = nx * ny * nz * 24
 
-    tetra_vol = ellipse.dx * ellipse.dy * ellipse.dz / 24
+    tetra_vol = Ellipse.dx * Ellipse.dy * Ellipse.dz / 24
 
-    q = tetra_vol * Heat_rate
+    q = tetra_vol * heat_rate
 
-    Q = np.zeros((n_tetra, 1), dtype=float)
+    some_val_q = np.zeros((n_tetra, 1), dtype=float)
 
     # Creating the UA matrix
 
-    UA, Q = ua_m.matrixgenerator(voxel_db, K, HTC, ellipse.dx, ellipse.dy, ellipse.dz, ellipse.voxel_n, ellipse.G, nx,
-                                 ny, nz, q, Q, Tamb)
+    ua, some_val_q = \
+        ua_m.matrixgenerator(
+            voxel_db, some_val_k, htc,
+            Ellipse.dx, Ellipse.dy, Ellipse.dz, Ellipse.voxel_n, Ellipse.G,
+            nx, ny, nz, q, some_val_q, tamb)
 
-    return (UA, Q)
+    return ua, some_val_q
 
 
 Heat_rate = 1000
@@ -49,7 +50,7 @@ HTC = 2.0
 k = 0.3
 Tamb = 20.0
 
-UA, Q = Heatsolver(Heat_rate, k, HTC, Tamb)
+UA, Q = heatsolver(Heat_rate, k, HTC, Tamb)
 
 print("Matrix generated, now solving it")
 
@@ -57,9 +58,9 @@ print("memory = ", sys.getsizeof(UA))
 
 T = spla.spsolve(UA, Q)
 
-Tdomtetra = np.zeros((ellipse.voxel_n, 24), dtype=float)
+Tdomtetra = np.zeros((Ellipse.voxel_n, 24), dtype=float)
 count = 0
-for vc in range(ellipse.voxel_n):
+for vc in range(Ellipse.voxel_n):
     for i in range(24):
         Tdomtetra[vc, i] = T[count]
         count = count + 1

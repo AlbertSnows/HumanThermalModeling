@@ -8,14 +8,14 @@ import visualization
 
 # start = timeit.default_timer()
 
-class coordinate:
+class Coordinate:
     def __init__(self, x_coord, y_coord, z_coord):
         self.x = x_coord
         self.y = y_coord
         self.z = z_coord
 
 
-class tetra:
+class Tetra:
     def __init__(self, point1, point2, point3, point4, material, position):
         self.p1 = point1
         self.p2 = point2
@@ -157,71 +157,71 @@ print("v_count", v_count)
 for k in range(nz):
     for j in range(ny):
         for i in range(nx):
-            voxel_db[v_count, 0] = coordinate(i * dx, j * dy, k * dz)
+            voxel_db[v_count, 0] = Coordinate(i * dx, j * dy, k * dz)
             voxel_db[v_count, 1] = voxel[i, j, k]
 
             # Breaking down the i,j,k in vertex coordinates
-            A = coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
+            A = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
                            round((k * dz + dz / 2.0), decimal))
-            B = coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
+            B = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
                            round((k * dz + dz / 2.0), decimal))
-            C = coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
+            C = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
                            round((k * dz + dz / 2.0), decimal))
-            D = coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
+            D = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
                            round((k * dz + dz / 2.0), decimal))
-            E = coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
+            E = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
                            round((k * dz - dz / 2.0), decimal))
-            F = coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
+            F = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
                            round((k * dz - dz / 2.0), decimal))
-            G = coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
+            G = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
                            round((k * dz - dz / 2.0), decimal))
-            H = coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
+            H = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
                            round((k * dz - dz / 2.0), decimal))
-            I = coordinate(round((i * dx), decimal), round(j * dy, decimal), round(k * dz, decimal))
-            Nc = coordinate(round(i * dx, decimal), round(j * dy, decimal), round((k * dz + dz / 2.0), decimal))
-            Sc = coordinate(round(i * dx, decimal), round(j * dy, decimal), round((k * dz - dz / 2.0), decimal))
-            Wc = coordinate(round(i * dx, decimal), round((j * dy - dy / 2.0), decimal), round(k * dz, decimal))
-            Ec = coordinate(round(i * dx, decimal), round((j * dy + dy / 2.0), decimal), round(k * dz, decimal))
-            Fc = coordinate(round((i * dx + dx / 2.0), decimal), round(j * dy, decimal), round(k * dz, decimal))
-            Bc = coordinate(round((i * dx - dx / 2.0), decimal), round(j * dy, decimal), round(k * dz, decimal))
+            I = Coordinate(round((i * dx), decimal), round(j * dy, decimal), round(k * dz, decimal))
+            Nc = Coordinate(round(i * dx, decimal), round(j * dy, decimal), round((k * dz + dz / 2.0), decimal))
+            Sc = Coordinate(round(i * dx, decimal), round(j * dy, decimal), round((k * dz - dz / 2.0), decimal))
+            Wc = Coordinate(round(i * dx, decimal), round((j * dy - dy / 2.0), decimal), round(k * dz, decimal))
+            Ec = Coordinate(round(i * dx, decimal), round((j * dy + dy / 2.0), decimal), round(k * dz, decimal))
+            Fc = Coordinate(round((i * dx + dx / 2.0), decimal), round(j * dy, decimal), round(k * dz, decimal))
+            Bc = Coordinate(round((i * dx - dx / 2.0), decimal), round(j * dy, decimal), round(k * dz, decimal))
             mat_tag = voxel[i, j, k]
 
             # North Tetras
 
-            voxel_db[v_count, 2] = tetra(Nc, A, B, I, mat_tag, 'N1')  # N1 coordinates 2
-            voxel_db[v_count, 3] = tetra(Nc, B, C, I, mat_tag, 'N2')  # N2 coordinates 3
-            voxel_db[v_count, 4] = tetra(Nc, C, D, I, mat_tag, 'N3')  # N3 coordinates 4
-            voxel_db[v_count, 5] = tetra(Nc, D, A, I, mat_tag, 'N4')  # N4 coordinates 5
+            voxel_db[v_count, 2] = Tetra(Nc, A, B, I, mat_tag, 'N1')  # N1 coordinates 2
+            voxel_db[v_count, 3] = Tetra(Nc, B, C, I, mat_tag, 'N2')  # N2 coordinates 3
+            voxel_db[v_count, 4] = Tetra(Nc, C, D, I, mat_tag, 'N3')  # N3 coordinates 4
+            voxel_db[v_count, 5] = Tetra(Nc, D, A, I, mat_tag, 'N4')  # N4 coordinates 5
 
             # South Tetras
-            voxel_db[v_count, 6] = tetra(Sc, E, F, I, mat_tag, 'S1')  # S1 coordinates 6
-            voxel_db[v_count, 7] = tetra(Sc, F, G, I, mat_tag, 'S2')  # S2 coordinates 7
-            voxel_db[v_count, 8] = tetra(Sc, G, H, I, mat_tag, 'S3')  # S3 coordinates 8
-            voxel_db[v_count, 9] = tetra(Sc, H, E, I, mat_tag, 'S4')  # S4 coordinates 9
+            voxel_db[v_count, 6] = Tetra(Sc, E, F, I, mat_tag, 'S1')  # S1 coordinates 6
+            voxel_db[v_count, 7] = Tetra(Sc, F, G, I, mat_tag, 'S2')  # S2 coordinates 7
+            voxel_db[v_count, 8] = Tetra(Sc, G, H, I, mat_tag, 'S3')  # S3 coordinates 8
+            voxel_db[v_count, 9] = Tetra(Sc, H, E, I, mat_tag, 'S4')  # S4 coordinates 9
 
             # West Tetras
-            voxel_db[v_count, 10] = tetra(Wc, C, B, I, mat_tag, 'W1')  # W1 coordinates 10
-            voxel_db[v_count, 11] = tetra(Wc, B, F, I, mat_tag, 'W2')  # W2 coordinates 11
-            voxel_db[v_count, 12] = tetra(Wc, F, G, I, mat_tag, 'W3')  # W3 coordinates 12
-            voxel_db[v_count, 13] = tetra(Wc, G, C, I, mat_tag, 'W4')  # W4 coordinates 13
+            voxel_db[v_count, 10] = Tetra(Wc, C, B, I, mat_tag, 'W1')  # W1 coordinates 10
+            voxel_db[v_count, 11] = Tetra(Wc, B, F, I, mat_tag, 'W2')  # W2 coordinates 11
+            voxel_db[v_count, 12] = Tetra(Wc, F, G, I, mat_tag, 'W3')  # W3 coordinates 12
+            voxel_db[v_count, 13] = Tetra(Wc, G, C, I, mat_tag, 'W4')  # W4 coordinates 13
 
             # East Tetras
-            voxel_db[v_count, 14] = tetra(Ec, A, D, I, mat_tag, 'E1')  # E1 coordinates 14
-            voxel_db[v_count, 15] = tetra(Ec, D, H, I, mat_tag, 'E2')  # E2 coordinates 15
-            voxel_db[v_count, 16] = tetra(Ec, H, E, I, mat_tag, 'E3')  # E3 coordinates 16
-            voxel_db[v_count, 17] = tetra(Ec, E, A, I, mat_tag, 'E4')  # E4 coordinates 17
+            voxel_db[v_count, 14] = Tetra(Ec, A, D, I, mat_tag, 'E1')  # E1 coordinates 14
+            voxel_db[v_count, 15] = Tetra(Ec, D, H, I, mat_tag, 'E2')  # E2 coordinates 15
+            voxel_db[v_count, 16] = Tetra(Ec, H, E, I, mat_tag, 'E3')  # E3 coordinates 16
+            voxel_db[v_count, 17] = Tetra(Ec, E, A, I, mat_tag, 'E4')  # E4 coordinates 17
 
             # Front Tetras
-            voxel_db[v_count, 18] = tetra(Fc, D, C, I, mat_tag, 'F1')  # F1 coordinates 18
-            voxel_db[v_count, 19] = tetra(Fc, C, G, I, mat_tag, 'F2')  # F2 coordinates 19
-            voxel_db[v_count, 20] = tetra(Fc, G, H, I, mat_tag, 'F3')  # F3 coordinates 20
-            voxel_db[v_count, 21] = tetra(Fc, H, D, I, mat_tag, 'F4')  # F4 coordinates 21
+            voxel_db[v_count, 18] = Tetra(Fc, D, C, I, mat_tag, 'F1')  # F1 coordinates 18
+            voxel_db[v_count, 19] = Tetra(Fc, C, G, I, mat_tag, 'F2')  # F2 coordinates 19
+            voxel_db[v_count, 20] = Tetra(Fc, G, H, I, mat_tag, 'F3')  # F3 coordinates 20
+            voxel_db[v_count, 21] = Tetra(Fc, H, D, I, mat_tag, 'F4')  # F4 coordinates 21
 
             # Back Tetras
-            voxel_db[v_count, 22] = tetra(Bc, B, A, I, mat_tag, 'B1')  # B1 coordinates 22
-            voxel_db[v_count, 23] = tetra(Bc, A, E, I, mat_tag, 'B2')  # B2 coordinates 23
-            voxel_db[v_count, 24] = tetra(Bc, E, F, I, mat_tag, 'B3')  # B3 coordinates 24
-            voxel_db[v_count, 25] = tetra(Bc, F, B, I, mat_tag, 'B4')  # B4 coordinates 25
+            voxel_db[v_count, 22] = Tetra(Bc, B, A, I, mat_tag, 'B1')  # B1 coordinates 22
+            voxel_db[v_count, 23] = Tetra(Bc, A, E, I, mat_tag, 'B2')  # B2 coordinates 23
+            voxel_db[v_count, 24] = Tetra(Bc, E, F, I, mat_tag, 'B3')  # B3 coordinates 24
+            voxel_db[v_count, 25] = Tetra(Bc, F, B, I, mat_tag, 'B4')  # B4 coordinates 25
 
             v_count = v_count + 1
 
@@ -236,7 +236,7 @@ for vc in range(voxel_n):
             vc, i + 2].p4.y) / 4
         gz = (voxel_db[vc, i + 2].p1.z + voxel_db[vc, i + 2].p2.z + voxel_db[vc, i + 2].p3.z + voxel_db[
             vc, i + 2].p4.z) / 4
-        G[vc, i] = coordinate(gx, gy, gz)
+        G[vc, i] = Coordinate(gx, gy, gz)
 
 # Triangle smoothening
 if (tetramode == 1):
