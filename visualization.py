@@ -1,5 +1,5 @@
 import vtk
-
+import time
 
 # Visualization
 def visualize(voxel_db, side_exposed, nx, ny, nz):
@@ -71,7 +71,7 @@ def visualize(voxel_db, side_exposed, nx, ny, nz):
 
     # Render and interact
     render_window.Render()
+    time.sleep(10)
     render_window_interactor.Start()
-
 # if __name__ == '__main__':
 #    main()
