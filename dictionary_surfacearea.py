@@ -1,369 +1,369 @@
-def N1(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("N1")
-    if (voxel_db[p + nx * ny, 6].mat != mat):  # S1
-        sumarea = sumarea + dx * dx * 0.25  # ; print ("perp S1",sumarea)
-    if (voxel_db[p, 3].mat != mat):  # N2
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 N2 ",p)
-    if (voxel_db[p, 5].mat != mat):  # N4
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 N4",p)
-    if (voxel_db[p, 22].mat != mat):  # B4
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side B4",p)
+def n1(voxel_db, p, nx, ny, dx, mat, sumarea):
+    #    print("n1")
+    if voxel_db[p + nx * ny, 6].mat != mat:  # s1
+        sumarea = sumarea + dx * dx * 0.25  # ; print ("perp s1",sumarea)
+    if voxel_db[p, 3].mat != mat:  # n2
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 n2 ",p)
+    if voxel_db[p, 5].mat != mat:  # n4
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 n4",p)
+    if voxel_db[p, 22].mat != mat:  # b4
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side b4",p)
     return sumarea
 
 
-def N2(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("N2")
-    if (voxel_db[p + nx * ny, 7].mat != mat):  # S2
-        sumarea = sumarea + dx * dx * 0.25  # ; print ("perp S2",sumarea)
-    if (voxel_db[p, 4].mat != mat):  # N3
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print ("side 1 N3",p)
-    if (voxel_db[p, 2].mat != mat):  # N1
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print ("side 2 N1",p)
-    if (voxel_db[p, 10].mat != mat):  # W1
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag W1",p)
+def n2(voxel_db, p, nx, ny, dx, mat, sumarea):
+    #    print("n2")
+    if voxel_db[p + nx * ny, 7].mat != mat:  # s2
+        sumarea = sumarea + dx * dx * 0.25  # ; print ("perp s2",sumarea)
+    if voxel_db[p, 4].mat != mat:  # n3
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print ("side 1 n3",p)
+    if voxel_db[p, 2].mat != mat:  # n1
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print ("side 2 n1",p)
+    if voxel_db[p, 10].mat != mat:  # w1
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag w1",p)
     return sumarea
 
 
-def N3(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("N3")
-    if (voxel_db[p + nx * ny, 8].mat != mat):  # S3
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp S3",sumarea)
-    if (voxel_db[p, 5].mat != mat):  # N4
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 N4",p)
-    if (voxel_db[p, 3].mat != mat):  # N2
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 N2",p)
-    if (voxel_db[p, 18].mat != mat):  # F1
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag F1",p)
+def n3(voxel_db, p, nx, ny, dx, mat, sumarea):
+    #    print("n3")
+    if voxel_db[p + nx * ny, 8].mat != mat:  # s3
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp s3",sumarea)
+    if voxel_db[p, 5].mat != mat:  # n4
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 n4",p)
+    if voxel_db[p, 3].mat != mat:  # n2
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 n2",p)
+    if voxel_db[p, 18].mat != mat:  # f1
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag f1",p)
     return sumarea
 
 
-def N4(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("N4")
-    if (voxel_db[p + nx * ny, 9].mat != mat):  # S4
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp S4",sumarea)
-    if (voxel_db[p, 2].mat != mat):  # N1
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 N1",p)
-    if (voxel_db[p, 4].mat != mat):  # N3
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 N3",p)
-    if (voxel_db[p, 14].mat != mat):  # E1
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag E1",p)
+def n4(voxel_db, p, nx, ny, dx, mat, sumarea):
+    #    print("n4")
+    if voxel_db[p + nx * ny, 9].mat != mat:  # s4
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp s4",sumarea)
+    if voxel_db[p, 2].mat != mat:  # n1
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 n1",p)
+    if voxel_db[p, 4].mat != mat:  # n3
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 n3",p)
+    if voxel_db[p, 14].mat != mat:  # e1
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag e1",p)
     return sumarea
 
 
-def S1(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("S1")
-    if (voxel_db[p - nx * ny, 2].mat != mat):  # N1
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp N1",sumarea)
-    if (voxel_db[p, 9].mat != mat):  # S4
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 S4",p)
-    if (voxel_db[p, 7].mat != mat):  # S2
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 S2",p)
-    if (voxel_db[p, 24].mat != mat):  # B3
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side B3",p)
+def s1(voxel_db, p, nx, ny, dx, mat, sumarea):
+    #    print("s1")
+    if voxel_db[p - nx * ny, 2].mat != mat:  # n1
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp n1",sumarea)
+    if voxel_db[p, 9].mat != mat:  # s4
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 s4",p)
+    if voxel_db[p, 7].mat != mat:  # s2
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 s2",p)
+    if voxel_db[p, 24].mat != mat:  # b3
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side b3",p)
     return sumarea
 
 
-def S2(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("S2")
-    if (voxel_db[p - nx * ny, 3].mat != mat):  # N2
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp N2",sumarea)
-    if (voxel_db[p, 9].mat != mat):  # S4
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 S4",p)
-    if (voxel_db[p, 8].mat != mat):  # S3
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 S3",p)
-    if (voxel_db[p, 12].mat != mat):  # W3
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side W3",p)
+def s2(voxel_db, p, nx, ny, dx, mat, sumarea):
+    #    print("s2")
+    if voxel_db[p - nx * ny, 3].mat != mat:  # n2
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp n2",sumarea)
+    if voxel_db[p, 9].mat != mat:  # s4
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 s4",p)
+    if voxel_db[p, 8].mat != mat:  # s3
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 s3",p)
+    if voxel_db[p, 12].mat != mat:  # w3
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side w3",p)
     return sumarea
 
 
-def S3(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("S3")
-    if (voxel_db[p - nx * ny, 4].mat != mat):  # N3
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp N3",sumarea)
-    if (voxel_db[p, 9].mat != mat):  # S4
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 S4",p)
-    if (voxel_db[p, 7].mat != mat):  # S2
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 S2",p)
-    if (voxel_db[p, 20].mat != mat):  # F3
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side F3",p)
+def s3(voxel_db, p, nx, ny, dx, mat, sumarea):
+    #    print("s3")
+    if voxel_db[p - nx * ny, 4].mat != mat:  # n3
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp n3",sumarea)
+    if voxel_db[p, 9].mat != mat:  # s4
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 s4",p)
+    if voxel_db[p, 7].mat != mat:  # s2
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 s2",p)
+    if voxel_db[p, 20].mat != mat:  # f3
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side f3",p)
     return sumarea
 
 
-def S4(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("S4")
-    if (voxel_db[p - nx * ny, 5].mat != mat):  # N4
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp N4",sumarea)
-    if (voxel_db[p, 6].mat != mat):  # S1
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 S1",p)
-    if (voxel_db[p, 8].mat != mat):  # S3
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print(" side 2 S3",p)
-    if (voxel_db[p, 16].mat != mat):  # E3
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side E3",p)
+def s4(voxel_db, p, nx, ny, dx, mat, sumarea):
+    #    print("s4")
+    if voxel_db[p - nx * ny, 5].mat != mat:  # n4
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp n4",sumarea)
+    if voxel_db[p, 6].mat != mat:  # s1
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 s1",p)
+    if voxel_db[p, 8].mat != mat:  # s3
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print(" side 2 s3",p)
+    if voxel_db[p, 16].mat != mat:  # e3
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side e3",p)
     return sumarea
 
 
-def W1(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("W1")
-    if (voxel_db[p - ny, 14].mat != mat):  # E1
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp E1",sumarea)
-    if (voxel_db[p, 11].mat != mat):  # W2
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 W2")
-    if (voxel_db[p, 13].mat != mat):  # W4
-        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 W4")
-    if (voxel_db[p, 3].mat != mat):  # N2
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side N2",p)
+def w1(voxel_db, p, ny, dx, mat, sumarea):
+    #    print("w1")
+    if voxel_db[p - ny, 14].mat != mat:  # e1
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp e1",sumarea)
+    if voxel_db[p, 11].mat != mat:  # w2
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 1 w2")
+    if voxel_db[p, 13].mat != mat:  # w4
+        sumarea = sumarea + 0.17677 * dx ** 2  # ; print("side 2 w4")
+    if voxel_db[p, 3].mat != mat:  # n2
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side n2",p)
     return sumarea
 
 
-def W2(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("W2")
-    if (voxel_db[p - ny, 17].mat != mat):  # E4
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp E4",sumarea)
-    if (voxel_db[p, 12].mat != mat):  # W3
+def w2(voxel_db, p, ny, dx, mat, sumarea):
+    #    print("w2")
+    if voxel_db[p - ny, 17].mat != mat:  # e4
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp e4",sumarea)
+    if voxel_db[p, 12].mat != mat:  # w3
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 10].mat != mat):  # W1
+    if voxel_db[p, 10].mat != mat:  # w1
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 25].mat != mat):  # B4
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side B4",p)
+    if voxel_db[p, 25].mat != mat:  # b4
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side b4",p)
     return sumarea
 
 
-def W3(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("W3")
-    if (voxel_db[p - ny, 16].mat != mat):  # E3
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp E3",sumarea)
-    if (voxel_db[p, 13].mat != mat):  # W4
+def w3(voxel_db, p, ny, dx, mat, sumarea):
+    #    print("w3")
+    if voxel_db[p - ny, 16].mat != mat:  # e3
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp e3",sumarea)
+    if voxel_db[p, 13].mat != mat:  # w4
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 11].mat != mat):  # W2
+    if voxel_db[p, 11].mat != mat:  # w2
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 7].mat != mat):  # S2
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side S2",p)
+    if voxel_db[p, 7].mat != mat:  # s2
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side s2",p)
     return sumarea
 
 
-def W4(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("W4")
-    if (voxel_db[p - ny, 15].mat != mat):  # E2
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp E2",sumarea)
-    if (voxel_db[p, 10].mat != mat):  # W1
+def w4(voxel_db, p, ny, dx, mat, sumarea):
+    #    print("w4")
+    if voxel_db[p - ny, 15].mat != mat:  # e2
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp e2",sumarea)
+    if voxel_db[p, 10].mat != mat:  # w1
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 12].mat != mat):  # W3
+    if voxel_db[p, 12].mat != mat:  # w3
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 19].mat != mat):  # F2
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side F2",p)
+    if voxel_db[p, 19].mat != mat:  # f2
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side f2",p)
     return sumarea
 
 
-def E1(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("E1")
-    if (voxel_db[p + ny, 10].mat != mat):  # W1
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp W1",sumarea)
-    if (voxel_db[p, 15].mat != mat):  # E2
+def e1(voxel_db, p, ny, dx, mat, sumarea):
+    #    print("e1")
+    if voxel_db[p + ny, 10].mat != mat:  # w1
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp w1",sumarea)
+    if voxel_db[p, 15].mat != mat:  # e2
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 17].mat != mat):  # E4
+    if voxel_db[p, 17].mat != mat:  # e4
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 5].mat != mat):  # N4
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side N4",p)
+    if voxel_db[p, 5].mat != mat:  # n4
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side n4",p)
     return sumarea
 
 
-def E2(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("E2")
-    if (voxel_db[p + ny, 13].mat != mat):  # W4
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp W4",sumarea)
-    if (voxel_db[p, 16].mat != mat):  # E3
+def e2(voxel_db, p, ny, dx, mat, sumarea):
+    #    print("e2")
+    if voxel_db[p + ny, 13].mat != mat:  # w4
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp w4",sumarea)
+    if voxel_db[p, 16].mat != mat:  # e3
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 14].mat != mat):  # E1
+    if voxel_db[p, 14].mat != mat:  # e1
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 21].mat != mat):  # F4
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side F4",p)
+    if voxel_db[p, 21].mat != mat:  # f4
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side f4",p)
     return sumarea
 
 
-def E3(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("E3")
-    if (voxel_db[p + ny, 12].mat != mat):  # W3
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp W3",sumarea)
-    if (voxel_db[p, 17].mat != mat):  # E4
+def e3(voxel_db, p, ny, dx, mat, sumarea):
+    #    print("e3")
+    if voxel_db[p + ny, 12].mat != mat:  # w3
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp w3",sumarea)
+    if voxel_db[p, 17].mat != mat:  # e4
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 15].mat != mat):  # E2
+    if voxel_db[p, 15].mat != mat:  # e2
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 9].mat != mat):  # S4
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side S4",p)
+    if voxel_db[p, 9].mat != mat:  # s4
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side s4",p)
     return sumarea
 
 
-def E4(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("E4")
-    if (voxel_db[p + ny, 11].mat != mat):  # W2
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp W2",sumarea)
-    if (voxel_db[p, 14].mat != mat):  # E1
+def e4(voxel_db, p, ny, dx, mat, sumarea):
+    #    print("e4")
+    if voxel_db[p + ny, 11].mat != mat:  # w2
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp w2",sumarea)
+    if voxel_db[p, 14].mat != mat:  # e1
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 16].mat != mat):  # E3
+    if voxel_db[p, 16].mat != mat:  # e3
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 23].mat != mat):  # B2
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side B2",p)
+    if voxel_db[p, 23].mat != mat:  # b2
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side b2",p)
     return sumarea
 
 
-def F1(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("F1")
-    if (voxel_db[p + 1, 22].mat != mat):  # B1
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp B1",sumarea)
-    if (voxel_db[p, 19].mat != mat):  # F2
+def f1(voxel_db, p, dx, mat, sumarea):
+    #    print("f1")
+    if voxel_db[p + 1, 22].mat != mat:  # b1
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp b1",sumarea)
+    if voxel_db[p, 19].mat != mat:  # f2
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 21].mat != mat):  # F4
+    if voxel_db[p, 21].mat != mat:  # f4
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 4].mat != mat):  # N3
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side N3",p)
+    if voxel_db[p, 4].mat != mat:  # n3
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side n3",p)
     return sumarea
 
 
-def F2(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("F2")
-    if (voxel_db[p + 1, 25].mat != mat):  # B4
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp B4",sumarea)
-    if (voxel_db[p, 20].mat != mat):  # F3
+def f2(voxel_db, p, dx, mat, sumarea):
+    #    print("f2")
+    if voxel_db[p + 1, 25].mat != mat:  # b4
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp b4",sumarea)
+    if voxel_db[p, 20].mat != mat:  # f3
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 18].mat != mat):  # F1
+    if voxel_db[p, 18].mat != mat:  # f1
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 13].mat != mat):  # W4
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side W4",p)
+    if voxel_db[p, 13].mat != mat:  # w4
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side w4",p)
     return sumarea
 
 
-def F3(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("F3")
-    if (voxel_db[p + 1, 24].mat != mat):  # B3
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp B3",sumarea)
-    if (voxel_db[p, 21].mat != mat):  # F4
+def f3(voxel_db, p, dx, mat, sumarea):
+    #    print("f3")
+    if voxel_db[p + 1, 24].mat != mat:  # b3
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp b3",sumarea)
+    if voxel_db[p, 21].mat != mat:  # f4
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 19].mat != mat):  # F2
+    if voxel_db[p, 19].mat != mat:  # f2
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 8].mat != mat):  # S3
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side S3",p)
+    if voxel_db[p, 8].mat != mat:  # s3
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side s3",p)
     return sumarea
 
 
-def F4(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("F4")
-    if (voxel_db[p + 1, 23].mat != mat):  # B2
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp B2",sumarea)
-    if (voxel_db[p, 18].mat != mat):  # F1
+def f4(voxel_db, p, dx, mat, sumarea):
+    #    print("f4")
+    if voxel_db[p + 1, 23].mat != mat:  # b2
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp b2",sumarea)
+    if voxel_db[p, 18].mat != mat:  # f1
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 20].mat != mat):  # F3
+    if voxel_db[p, 20].mat != mat:  # f3
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 15].mat != mat):  # E2
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side E2",p)
+    if voxel_db[p, 15].mat != mat:  # e2
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side e2",p)
     return sumarea
 
 
-def B1(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("B1")
-    if (voxel_db[p - 1, 18].mat != mat):  # F1
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp F1",sumarea)
-    if (voxel_db[p, 23].mat != mat):  # B2
+def b1(voxel_db, p, dx, mat, sumarea):
+    #    print("b1")
+    if voxel_db[p - 1, 18].mat != mat:  # f1
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp f1",sumarea)
+    if voxel_db[p, 23].mat != mat:  # b2
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 25].mat != mat):  # B4
+    if voxel_db[p, 25].mat != mat:  # b4
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 2].mat != mat):  # N1
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side N1",p)
+    if voxel_db[p, 2].mat != mat:  # n1
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side n1",p)
     return sumarea
 
 
-def B2(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("B2")
-    if (voxel_db[p - 1, 21].mat != mat):  # F4
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp F4",sumarea)
-    if (voxel_db[p, 24].mat != mat):  # B3
+def b2(voxel_db, p, dx, mat, sumarea):
+    #    print("b2")
+    if voxel_db[p - 1, 21].mat != mat:  # f4
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp f4",sumarea)
+    if voxel_db[p, 24].mat != mat:  # b3
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 22].mat != mat):  # B1
+    if voxel_db[p, 22].mat != mat:  # b1
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 17].mat != mat):  # E4
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side E4",p)
+    if voxel_db[p, 17].mat != mat:  # e4
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side e4",p)
     return sumarea
 
 
-def B3(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("B3")
-    if (voxel_db[p - 1, 20].mat != mat):  # F3
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp F3",sumarea)
-    if (voxel_db[p, 25].mat != mat):  # B4
+def b3(voxel_db, p, dx, mat, sumarea):
+    #    print("b3")
+    if voxel_db[p - 1, 20].mat != mat:  # f3
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp f3",sumarea)
+    if voxel_db[p, 25].mat != mat:  # b4
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 23].mat != mat):  # B2
+    if voxel_db[p, 23].mat != mat:  # b2
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 6].mat != mat):  # S3
-        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side S3",p)
+    if voxel_db[p, 6].mat != mat:  # s3
+        sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side s3",p)
     return sumarea
 
 
-def B4(voxel_db, p, nx, ny, nz, dx, mat, sumarea):
-    #    print("B4")
-    if (voxel_db[p - 1, 19].mat != mat):  # F2
-        sumarea = sumarea + dx * dx * 0.25  # ; print("perp F2",sumarea)
-    if (voxel_db[p, 22].mat != mat):  # B1
+def b4(voxel_db, p, dx, mat, sumarea):
+    #    print("b4")
+    if voxel_db[p - 1, 19].mat != mat:  # f2
+        sumarea = sumarea + dx * dx * 0.25  # ; print("perp f2",sumarea)
+    if voxel_db[p, 22].mat != mat:  # b1
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 24].mat != mat):  # B3
+    if voxel_db[p, 24].mat != mat:  # b3
         sumarea = sumarea + 0.17677 * dx ** 2
-    if (voxel_db[p, 11].mat != mat):  # W2
+    if voxel_db[p, 11].mat != mat:  # w2
         sumarea = sumarea + 0.3535 * dx ** 2  # ; print("diag side w2",p)
     return sumarea
 
 
 def func(tag, voxel_db, p, nx, ny, nz, dx, mat):
     sumarea = 0.0
-    if (tag == 'N1'):
-        sumarea = N1(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'N2'):
-        sumarea = N2(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'N3'):
-        sumarea = N3(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'N4'):
-        sumarea = N4(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
+    if tag == 'n1':
+        sumarea = n1(voxel_db, p, nx, ny, dx, mat, sumarea)
+    elif tag == 'n2':
+        sumarea = n2(voxel_db, p, nx, ny, dx, mat, sumarea)
+    elif tag == 'n3':
+        sumarea = n3(voxel_db, p, nx, ny, dx, mat, sumarea)
+    elif tag == 'n4':
+        sumarea = n4(voxel_db, p, nx, ny, dx, mat, sumarea)
 
-    elif (tag == 'S1'):
-        sumarea = S1(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'S2'):
-        sumarea = S2(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'S3'):
-        sumarea = S3(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'S4'):
-        sumarea = S4(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
+    elif tag == 's1':
+        sumarea = s1(voxel_db, p, nx, ny, dx, mat, sumarea)
+    elif tag == 's2':
+        sumarea = s2(voxel_db, p, nx, ny, dx, mat, sumarea)
+    elif tag == 's3':
+        sumarea = s3(voxel_db, p, nx, ny, dx, mat, sumarea)
+    elif tag == 's4':
+        sumarea = s4(voxel_db, p, nx, ny, dx, mat, sumarea)
 
-    elif (tag == 'W1'):
-        sumarea = W1(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'W2'):
-        sumarea = W2(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'W3'):
-        sumarea = W3(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'W4'):
-        sumarea = W4(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
+    elif tag == 'w1':
+        sumarea = w1(voxel_db, p, ny, dx, mat, sumarea)
+    elif tag == 'w2':
+        sumarea = w2(voxel_db, p, ny, dx, mat, sumarea)
+    elif tag == 'w3':
+        sumarea = w3(voxel_db, p, ny, dx, mat, sumarea)
+    elif tag == 'w4':
+        sumarea = w4(voxel_db, p, ny, dx, mat, sumarea)
 
-    elif (tag == 'E1'):
-        sumarea = E1(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'E2'):
-        sumarea = E2(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'E3'):
-        sumarea = E3(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'E4'):
-        sumarea = E4(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
+    elif tag == 'e1':
+        sumarea = e1(voxel_db, p, ny, dx, mat, sumarea)
+    elif tag == 'e2':
+        sumarea = e2(voxel_db, p, ny, dx, mat, sumarea)
+    elif tag == 'e3':
+        sumarea = e3(voxel_db, p, ny, dx, mat, sumarea)
+    elif tag == 'e4':
+        sumarea = e4(voxel_db, p, ny, dx, mat, sumarea)
 
-    elif (tag == 'F1'):
-        sumarea = F1(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'F2'):
-        sumarea = F2(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'F3'):
-        sumarea = F3(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'F4'):
-        sumarea = F4(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
+    elif tag == 'f1':
+        sumarea = f1(voxel_db, p, dx, mat, sumarea)
+    elif tag == 'f2':
+        sumarea = f2(voxel_db, p, dx, mat, sumarea)
+    elif tag == 'f3':
+        sumarea = f3(voxel_db, p, dx, mat, sumarea)
+    elif tag == 'f4':
+        sumarea = f4(voxel_db, p, dx, mat, sumarea)
 
-    elif (tag == 'B1'):
-        sumarea = B1(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'B2'):
-        sumarea = B2(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'B3'):
-        sumarea = B3(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
-    elif (tag == 'B4'):
-        sumarea = B4(voxel_db, p, nx, ny, nz, dx, mat, sumarea)
+    elif tag == 'b1':
+        sumarea = b1(voxel_db, p, dx, mat, sumarea)
+    elif tag == 'b2':
+        sumarea = b2(voxel_db, p, dx, mat, sumarea)
+    elif tag == 'b3':
+        sumarea = b3(voxel_db, p, dx, mat, sumarea)
+    elif tag == 'b4':
+        sumarea = b4(voxel_db, p, dx, mat, sumarea)
 
     return sumarea

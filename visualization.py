@@ -1,16 +1,15 @@
 import vtk
+import time
 
 # Visualization
-
-def visualize(voxel_db, side_exposed, nx, ny, nz, cx, cy, cz):
+def visualize(voxel_db, side_exposed, nx, ny, nz):
     # Create a renderer, render window, and interactor
     renderer = vtk.vtkRenderer()
-    renderWindow = vtk.vtkRenderWindow()
-    renderWindow.SetWindowName("Tetrahedron")
-    renderWindow.AddRenderer(renderer)
-    renderWindowInteractor = vtk.vtkRenderWindowInteractor()
-    renderWindowInteractor.SetRenderWindow(renderWindow)
-
+    render_window = vtk.vtkRenderWindow()
+    render_window.SetWindowName("Tetrahedron")
+    render_window.AddRenderer(renderer)
+    render_window_interactor = vtk.vtkWin32RenderWindowInteractor()
+    render_window_interactor.SetRenderWindow(render_window)
     colors = vtk.vtkNamedColors()
 
     points = vtk.vtkPoints()
@@ -35,8 +34,8 @@ def visualize(voxel_db, side_exposed, nx, ny, nz, cx, cy, cz):
                             v_db = [voxel_db[k, i].p4.x, voxel_db[k, i].p4.y, voxel_db[k, i].p4.z]
                             points.InsertNextPoint(v_db)
 
-                            unstructuredGrid = vtk.vtkUnstructuredGrid()
-                            unstructuredGrid.SetPoints(points)
+                            unstructured_grid = vtk.vtkUnstructuredGrid()
+                            unstructured_grid.SetPoints(points)
 
                             tetra = vtk.vtkTetra()
 
@@ -46,16 +45,16 @@ def visualize(voxel_db, side_exposed, nx, ny, nz, cx, cy, cz):
                             tetra.GetPointIds().SetId(3, m + 3)
                             m = m + 4
 
-                            cellArray = vtk.vtkCellArray()
-                            cellArray.InsertNextCell(tetra)
-                            unstructuredGrid.SetCells(vtk.VTK_TETRA, cellArray)
+                            cell_array = vtk.vtkCellArray()
+                            cell_array.InsertNextCell(tetra)
+                            unstructured_grid.SetCells(vtk.VTK_TETRA, cell_array)
 
                             # Create a mapper and actor
                             mapper = vtk.vtkDataSetMapper()
                             if vtk.VTK_MAJOR_VERSION <= 5:
-                                mapper.SetInputConnection(unstructuredGrid.GetProducerPort())
+                                mapper.SetInputConnection(unstructured_grid.GetProducerPort())
                             else:
-                                mapper.SetInputData(unstructuredGrid)
+                                mapper.SetInputData(unstructured_grid)
 
                             actor = vtk.vtkActor()
                             actor.SetMapper(mapper)
@@ -71,8 +70,8 @@ def visualize(voxel_db, side_exposed, nx, ny, nz, cx, cy, cz):
     renderer.GetActiveCamera().Elevation(-20)
 
     # Render and interact
-    renderWindow.Render()
-    renderWindowInteractor.Start()
-
+    render_window.Render()
+    time.sleep(10)
+    render_window_interactor.Start()
 # if __name__ == '__main__':
 #    main()
