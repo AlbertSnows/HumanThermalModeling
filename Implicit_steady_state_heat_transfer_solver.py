@@ -50,7 +50,7 @@ HTC = 2.0
 k_val = 0.3
 Tamb = 20.0
 
-UA, Q = heatsolver(Heat_rate, k, HTC, Tamb)
+UA, Q = heatsolver(Heat_rate, k_val, HTC, Tamb)
 
 print("Matrix generated, now solving it")
 
