@@ -13,7 +13,7 @@ faulthandler.enable()
 # matplotlib.use('Agg')
 # t_count = 0
 voxel_mat = Vox.dom
-outer_g = Ellipse.G
+outer_g = Ellipse.g_coord
 ua_test_voxel = Vox.UA_v
 ua_test_tetra = steadyStateHeatTransfer.UA  # .todense()
 Q_test_tetra = steadyStateHeatTransfer.Q

@@ -43,6 +43,7 @@ voxel = numpy.zeros((nx, ny, nz), dtype=int)
 voxel_n = nx * ny * nz
 voxel_db = numpy.empty((voxel_n, 26), dtype=object)
 g_coord = -1
+side_exposed = -1
 # cProfile.run('main()')
 
 
@@ -51,6 +52,7 @@ def main():
     global voxel_n
     global voxel_db
     global g_coord
+    global side_exposed
     calculate_surface_area = True
     use_visualization = True
     calculate_volume = True
