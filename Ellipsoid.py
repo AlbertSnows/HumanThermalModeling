@@ -3,9 +3,7 @@ import numpy as np
 import dictionary_surfacearea as dicsurfarea
 import visualization
 
-
 # import timeit as timeit
-
 # start = timeit.default_timer()
 
 class Coordinate:
@@ -51,9 +49,10 @@ cz = int(nz / 2)
 voxel = np.zeros((nx, ny, nz), dtype=int)
 voxel_count = np.copy(voxel)
 count = 0
-for k in range(nz):
+
+for i in range(nx):
     for j in range(ny):
-        for i in range(nx):
+        for k in range(nz):
             voxel_count[i, j, k] = count
             count = count + 1
             if (((i - cx) / (a / dx)) ** 2) + (((j - cy) / (b / dy)) ** 2) + (((k - cz) / (c / dz)) ** 2) <= 1:
@@ -64,50 +63,62 @@ for k in range(nz):
 # tagging the voxel on sides exposed
 side_exposed = np.copy(voxel)
 
-for k in range(nz):
+for i in range(nx):
+    x1 = i-1
+    y1 = i+1
     for j in range(ny):
-        for i in range(nx):
+        x2 = j-1
+        y2 = j+1
+        for k in range(nz):
+            x3 = k-1
+            y3 = k+1
             if voxel[i, j, k] != 0:
                 count = 0
-                if voxel[i - 1, j, k] == 0:
+                if voxel[x1, j, k] == 0:
                     count = count + 1
-                if voxel[i + 1, j, k] == 0:
+                if voxel[y1, j, k] == 0:
                     count = count + 1
-                if voxel[i, j - 1, k] == 0:
+                if voxel[i, x2, k] == 0:
                     count = count + 1
-                if voxel[i, j + 1, k] == 0:
+                if voxel[i, y2, k] == 0:
                     count = count + 1
-                if voxel[i, j, k - 1] == 0:
+                if voxel[i, j, x3] == 0:
                     count = count + 1
-                if voxel[i, j, k + 1] == 0:
+                if voxel[i, j, y3] == 0:
                     count = count + 1
                 side_exposed[i, j, k] = count
 
 # Removing 5 sides exposed cubes
-for k in range(nz):
+for i in range(nx):
     for j in range(ny):
-        for i in range(nx):
+        for k in range(nz):
             if side_exposed[i, j, k] == 5:
                 voxel[i, j, k] = 0
                 side_exposed[i, j, k] = 0
 
 # Recounting
-for k in range(nz):
+for i in range(nx):
+    a1 = i-1
+    b1 = i+1
     for j in range(ny):
-        for i in range(nx):
+        a2 = j-1
+        b2 = j+1
+        for k in range(nz):
+            a3 = k-1
+            b3 = k+1
             if voxel[i, j, k] != 0:
                 count = 0
-                if voxel[i - 1, j, k] == 0:
+                if voxel[a1, j, k] == 0:
                     count = count + 1
-                if voxel[i + 1, j, k] == 0:
+                if voxel[b1, j, k] == 0:
                     count = count + 1
-                if voxel[i, j - 1, k] == 0:
+                if voxel[i, a2, k] == 0:
                     count = count + 1
-                if voxel[i, j + 1, k] == 0:
+                if voxel[i, b2, k] == 0:
                     count = count + 1
-                if voxel[i, j, k - 1] == 0:
+                if voxel[i, j, a3] == 0:
                     count = count + 1
-                if voxel[i, j, k + 1] == 0:
+                if voxel[i, j, b3] == 0:
                     count = count + 1
                 side_exposed[i, j, k] = count
 
