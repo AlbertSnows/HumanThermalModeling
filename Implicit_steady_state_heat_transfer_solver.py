@@ -1,6 +1,6 @@
 import faulthandler
 import sys
-import numpy as np
+import numpy
 import scipy.sparse.linalg as spla
 import Ellipsoid as Ellipse
 import ua_matrix_generator as ua_m
@@ -15,7 +15,7 @@ faulthandler.enable()
 def heatsolver(heat_rate, th_cond, htc, tamb):
     voxel_db = Ellipse.voxel_db
 
-    some_val_k = np.zeros((Ellipse.voxel_n, 24), dtype=float)
+    some_val_k = numpy.zeros((Ellipse.voxel_n, 24), dtype=float)
 
     for voxel_n_element in range(Ellipse.voxel_n):
         for number in range(24):
@@ -39,7 +39,7 @@ def heatsolver(heat_rate, th_cond, htc, tamb):
     ua, some_val_q = \
         ua_m.matrixgenerator(
             voxel_db, some_val_k, htc,
-            Ellipse.dx, Ellipse.G,
+            Ellipse.dx, Ellipse.g_coord,
             nx, ny, nz, q, tamb)
 
     return ua, some_val_q
@@ -58,7 +58,7 @@ print("memory = ", sys.getsizeof(UA))
 
 T = spla.spsolve(UA, Q)
 
-Tdomtetra = np.zeros((Ellipse.voxel_n, 24), dtype=float)
+Tdomtetra = numpy.zeros((Ellipse.voxel_n, 24), dtype=float)
 count = 0
 for vc in range(Ellipse.voxel_n):
     for i in range(24):
