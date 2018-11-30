@@ -6,6 +6,7 @@ import visualization
 import dictionary_surfacearea as dicsurfarea
 
 import timeit as timeit
+
 start = timeit.default_timer()
 
 
@@ -43,6 +44,8 @@ voxel_n = nx * ny * nz
 voxel_db = numpy.empty((voxel_n, 26), dtype=object)
 g_coord = -1
 side_exposed = -1
+
+
 # cProfile.run('main()')
 
 
@@ -59,9 +62,9 @@ def main():
 
     voxel_count = numpy.copy(voxel)
     count = 0
-    divx = dx/2.0
-    divy = dy/2.0
-    divz = dz/2.0
+    divx = dx / 2.0
+    divy = dy / 2.0
+    divz = dz / 2.0
     for k in range(nz):
         for j in range(ny):
             for i in range(nx):
@@ -163,7 +166,7 @@ def main():
     for i in range(nz):
         multi = i * dx
         for j in range(ny):
-            multj = j*dy
+            multj = j * dy
             for k in range(nz):
                 multk = k * dz
                 voxel_db[v_count, 0] = Coordinate(i * dx, j * dy, k * dz)
@@ -173,51 +176,27 @@ def main():
                 a_coord = Coordinate(round((multi - divx), decimal), round((multj + divy), decimal),
                                      round((multk + divz), decimal))
                 b_coord = Coordinate(round((multi - divx), decimal), round((multj - divy), decimal),
-                               round((multk + divz), decimal))
+                                     round((multk + divz), decimal))
                 c_coord = Coordinate(round((multi + divx), decimal), round((multj - divy), decimal),
-                               round((multk + divz), decimal))
+                                     round((multk + divz), decimal))
                 d_coord = Coordinate(round((multi + divx), decimal), round((multj + divy), decimal),
-                               round((multk + divz), decimal))
+                                     round((multk + divz), decimal))
                 e_coord = Coordinate(round((multi - divx), decimal), round((multj + divy), decimal),
-                               round((multk - divz), decimal))
+                                     round((multk - divz), decimal))
                 f_coord = Coordinate(round((multi - divx), decimal), round((multj - divy), decimal),
-                               round((multk - divz), decimal))
+                                     round((multk - divz), decimal))
                 g_coord = Coordinate(round((multi + divx), decimal), round((multj - divy), decimal),
-                               round((multk - divz), decimal))
+                                     round((multk - divz), decimal))
                 h_coord = Coordinate(round((multi + divx), decimal), round((multj + divy), decimal),
-                               round((multk - divz), decimal))
+                                     round((multk - divz), decimal))
 
-
-                b_coord = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
-                                     round((k * dz + dz / 2.0), decimal))
-                c_coord = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
-                                     round((k * dz + dz / 2.0), decimal))
-                d_coord = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
-                                     round((k * dz + dz / 2.0), decimal))
-                e_coord = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
-                                     round((k * dz - dz / 2.0), decimal))
-                f_coord = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
-                                     round((k * dz - dz / 2.0), decimal))
-                g_coord = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
-                                     round((k * dz - dz / 2.0), decimal))
-                h_coord = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
-                                     round((k * dz - dz / 2.0), decimal))
-
-                I_val = Coordinate(round(multi, decimal), round(multj, decimal), round(multk, decimal))
-                Nc = Coordinate(round(multi, decimal), round(multj, decimal), round((multk + divz), decimal))
-                Sc = Coordinate(round(multi, decimal), round(multj, decimal), round((multk - divz), decimal))
-                Wc = Coordinate(round(multi, decimal), round((multj - divy), decimal), round(multk, decimal))
-                Ec = Coordinate(round(multi, decimal), round((multj + divy), decimal), round(multk, decimal))
-                Fc = Coordinate(round((multi + divx), decimal), round(multj, decimal), round(multk, decimal))
-                Bc = Coordinate(round((multi - divx), decimal), round(multj, decimal), round(multk, decimal))
-                mat_tag = voxel[i, j, k]
-                i_val = Coordinate(round((i * dx), decimal), round(j * dy, decimal), round(k * dz, decimal))
-                nc = Coordinate(round(i * dx, decimal), round(j * dy, decimal), round((k * dz + dz / 2.0), decimal))
-                sc = Coordinate(round(i * dx, decimal), round(j * dy, decimal), round((k * dz - dz / 2.0), decimal))
-                wc = Coordinate(round(i * dx, decimal), round((j * dy - dy / 2.0), decimal), round(k * dz, decimal))
-                ec = Coordinate(round(i * dx, decimal), round((j * dy + dy / 2.0), decimal), round(k * dz, decimal))
-                fc = Coordinate(round((i * dx + dx / 2.0), decimal), round(j * dy, decimal), round(k * dz, decimal))
-                bc = Coordinate(round((i * dx - dx / 2.0), decimal), round(j * dy, decimal), round(k * dz, decimal))
+                i_val = Coordinate(round(multi, decimal), round(multj, decimal), round(multk, decimal))
+                nc = Coordinate(round(multi, decimal), round(multj, decimal), round((multk + divz), decimal))
+                sc = Coordinate(round(multi, decimal), round(multj, decimal), round((multk - divz), decimal))
+                wc = Coordinate(round(multi, decimal), round((multj - divy), decimal), round(multk, decimal))
+                ec = Coordinate(round(multi, decimal), round((multj + divy), decimal), round(multk, decimal))
+                fc = Coordinate(round((multi + divx), decimal), round(multj, decimal), round(multk, decimal))
+                bc = Coordinate(round((multi - divx), decimal), round(multj, decimal), round(multk, decimal))
                 mat_tag = voxel[i, j, k]
 
                 # North Tetras
