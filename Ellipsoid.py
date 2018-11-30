@@ -3,8 +3,9 @@ import numpy as np
 import dictionary_surfacearea as dicsurfarea
 import visualization
 
-# import timeit as timeit
-# start = timeit.default_timer()
+# initializes timer
+import timeit as timeit
+start = timeit.default_timer()
 
 class Coordinate:
     def __init__(self, x_coord, y_coord, z_coord):
@@ -24,9 +25,9 @@ class Tetra:
 
 
 decimal = 5
-a = 0.10
-b = 0.10
-c = 0.10
+a = 2.0
+b = 2.0
+c = 2.0
 # R = 0.1
 dx = dy = dz = 0.06
 dr = mt.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
@@ -161,40 +162,39 @@ voxel_n = nx * ny * nz
 voxel_db = np.empty((voxel_n, 26), dtype=object)
 
 v_count = 0
+divx = dx / 2.0
+divy = dy / 2.0
+divz = dz / 2.0
 print("nz", nz)
 print("ny", ny)
 print("nx", nz)
 print("v_count", v_count)
-for k in range(nz):
+for i in range(nx):
+    multi = i * dx
     for j in range(ny):
-        for i in range(nx):
+        multj = j * dy
+        for k in range(nz):
+            multk = k * dz
             voxel_db[v_count, 0] = Coordinate(i * dx, j * dy, k * dz)
             voxel_db[v_count, 1] = voxel[i, j, k]
 
             # Breaking down the i,j,k in vertex coordinates
-            A = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
-                           round((k * dz + dz / 2.0), decimal))
-            B = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
-                           round((k * dz + dz / 2.0), decimal))
-            C = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
-                           round((k * dz + dz / 2.0), decimal))
-            D = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
-                           round((k * dz + dz / 2.0), decimal))
-            E = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
-                           round((k * dz - dz / 2.0), decimal))
-            F = Coordinate(round((i * dx - dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
-                           round((k * dz - dz / 2.0), decimal))
-            G = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy - dy / 2.0), decimal),
-                           round((k * dz - dz / 2.0), decimal))
-            H = Coordinate(round((i * dx + dx / 2.0), decimal), round((j * dy + dy / 2.0), decimal),
-                           round((k * dz - dz / 2.0), decimal))
-            I_val = Coordinate(round((i * dx), decimal), round(j * dy, decimal), round(k * dz, decimal))
-            Nc = Coordinate(round(i * dx, decimal), round(j * dy, decimal), round((k * dz + dz / 2.0), decimal))
-            Sc = Coordinate(round(i * dx, decimal), round(j * dy, decimal), round((k * dz - dz / 2.0), decimal))
-            Wc = Coordinate(round(i * dx, decimal), round((j * dy - dy / 2.0), decimal), round(k * dz, decimal))
-            Ec = Coordinate(round(i * dx, decimal), round((j * dy + dy / 2.0), decimal), round(k * dz, decimal))
-            Fc = Coordinate(round((i * dx + dx / 2.0), decimal), round(j * dy, decimal), round(k * dz, decimal))
-            Bc = Coordinate(round((i * dx - dx / 2.0), decimal), round(j * dy, decimal), round(k * dz, decimal))
+            A = Coordinate(round((multi - divx), decimal), round((multj + divy), decimal), round((multk + divz), decimal))
+            B = Coordinate(round((multi - divx), decimal), round((multj - divy), decimal), round((multk + divz), decimal))
+            C = Coordinate(round((multi + divx), decimal), round((multj - divy), decimal), round((multk + divz), decimal))
+            D = Coordinate(round((multi + divx), decimal), round((multj + divy), decimal), round((multk + divz), decimal))
+            E = Coordinate(round((multi - divx), decimal), round((multj + divy), decimal), round((multk - divz), decimal))
+            F = Coordinate(round((multi - divx), decimal), round((multj - divy), decimal), round((multk - divz), decimal))
+            G = Coordinate(round((multi + divx), decimal), round((multj - divy), decimal), round((multk - divz), decimal))
+            H = Coordinate(round((multi + divx), decimal), round((multj + divy), decimal), round((multk - divz), decimal))
+            
+            I_val = Coordinate(round(multi, decimal), round(multj, decimal), round(multk, decimal))
+            Nc = Coordinate(round(multi, decimal), round(multj, decimal), round((multk + divz), decimal))
+            Sc = Coordinate(round(multi, decimal), round(multj, decimal), round((multk - divz), decimal))
+            Wc = Coordinate(round(multi, decimal), round((multj - divy), decimal), round(multk, decimal))
+            Ec = Coordinate(round(multi, decimal), round((multj + divy), decimal), round(multk, decimal))
+            Fc = Coordinate(round((multi + divx), decimal), round(multj, decimal), round(multk, decimal))
+            Bc = Coordinate(round((multi - divx), decimal), round(multj, decimal), round(multk, decimal))
             mat_tag = voxel[i, j, k]
 
             # North Tetras
@@ -237,7 +237,6 @@ for k in range(nz):
             v_count = v_count + 1
 
 # Add centroid
-
 G = np.zeros((voxel_n, 24), dtype=object)
 for vc in range(voxel_n):
     for i in range(24):
@@ -252,9 +251,9 @@ for vc in range(voxel_n):
 # Triangle smoothening
 if tetramode == 1:
     v_count = 0
-    for k in range(nz):
+    for i in range(nx):
         for j in range(ny):
-            for i in range(nx):
+            for k in range(nz):
                 # Three Sides Exposed
                 if side_exposed[i, j, k] > 1:
 
@@ -357,17 +356,17 @@ if tetramode == 1:
                 v_count = v_count + 1
 
 # Visualization
-if use_visualization == 1:
-    visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
-
+#if use_visualization == 1:
+ #   visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
+#print("Hasn't died yet 2")
 # Calculate the surface area
 if surfaceareacalc == 1:
 
     d = 0
     areasum1 = 0.0
-    for k in range(nz):
+    for i in range(nx):
         for j in range(ny):
-            for i in range(nx):
+            for k in range(nz):
                 if side_exposed[i, j, k] != 0:
                     for m in range(2, 26):
                         if voxel_db[d, m].mat != 0:
@@ -376,10 +375,10 @@ if surfaceareacalc == 1:
                 d = d + 1
     print("Tetra Area = ", areasum1)
 
-    voxelarea = 0
-    for k in range(nz):
+    voxelarea = float(0)
+    for i in range(nx):
         for j in range(ny):
-            for i in range(nx):
+            for k in range(nz):
                 if voxel[i, j, k] == 1:
                     voxelarea = side_exposed[i, j, k] + voxelarea
     actualarea = 4 * mt.pi * (((a * b) ** 1.6 + (a * c) ** 1.6 + (b * c) ** 1.6) / 3.0) ** (1 / 1.6)
@@ -405,23 +404,24 @@ if volumecalc == 1:
     tetra_volume = volume * dx * dy * dz / 24
     print("\ntetra volume = ", tetra_volume)
 
-    voxel_volume = 0
-    for k in range(nz):
+    voxel_volume = float(0)
+    for i in range(nx):
         for j in range(ny):
-            for i in range(nx):
+            for k in range(nz):
                 if voxel[i, j, k] == 1:
-                    voxel_volume = voxel_volume + dx * dy * dz
+                   voxel_volume = voxel_volume + dx * dy * dz
 
     print("voxel volume = ", voxel_volume)
 
     actualvolume = 4 / 3 * mt.pi * a * b * c
     print("actual volume = ", actualvolume, "\n")
 
-
-# stop = timeit.default_timer()
-# print("dx = ",dx,"time = ",stop-start,"seconds")
-# print("domain size =",voxel_n*24)
-# print("matrix size =",voxel_n*24*voxel_n*24)
+# stops timer and displays the calculated values
+stop = timeit.default_timer()
+print("completed successfully")
+print("dx = ",dx,"time = ",stop-start,"seconds")
+print("domain size =",voxel_n*24)
+print("matrix size =",voxel_n*24*voxel_n*24)
 
 # Steady State Heat Transfer Solver
 
