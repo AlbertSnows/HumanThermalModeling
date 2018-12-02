@@ -469,5 +469,6 @@ def main():
         visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
 
 
+# ~20s
 if __name__ == "__main__":
     main()
