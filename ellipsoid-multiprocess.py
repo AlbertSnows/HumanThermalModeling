@@ -444,7 +444,7 @@ remove_exposed(side_exposed) #phase 2
 voxel_n = recounting() #phase 3
 create_matrix(voxel_n) #phase 4
 
-# multiprocessing
+# multiprocessing - needs fix, prints multiple times
 if __name__ == "__main__":
     phase5 = mproc.Process(target=triangle_smoothening)
     phase6 = mproc.Process(target=add_centroid)
