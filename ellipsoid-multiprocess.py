@@ -14,7 +14,6 @@ class Coordinate:
         self.y = y_coord
         self.z = z_coord
 
-
 class Tetra:
     def __init__(self, point1, point2, point3, point4, material, position):
         self.p1 = point1
