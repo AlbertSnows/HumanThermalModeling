@@ -338,7 +338,6 @@ def calc_surface_area():
                                 areasum1 = areasum1 + dicsurfarea.func(voxel_db[d, m].pos, voxel_db, d, nx, ny, nz, dx,
                                                                     voxel_db[d, m].mat)
                     d = d + 1
-        
 
         voxelarea = float(0)
         for i in range(nx):
@@ -404,9 +403,9 @@ def display_visual(use_visualization):
 global side_exposed
 
 decimal = 5
-a = 1.0
-b = 1.0
-c = 1.0
+a = 2.1
+b = 2.1
+c = 2.1
 # R = 0.1
 dx = dy = dz = 0.06
 dr = mt.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
