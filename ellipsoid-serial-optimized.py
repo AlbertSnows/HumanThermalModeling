@@ -358,7 +358,7 @@ if tetramode == 1:
 # Visualization
 #if use_visualization == 1:
  #   visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
-#print("Hasn't died yet 2")
+
 # Calculate the surface area
 if surfaceareacalc == 1:
 
