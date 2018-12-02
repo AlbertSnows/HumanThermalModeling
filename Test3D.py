@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
-import Ellipsoid_optimized_full as Ellip
+import ellipsoid_optimized_full as Ellip
 import Implicit_steady_state_heat_transfer_solver as Isht
 # import math as mth
 # import matplotlib.pyplot as plt
