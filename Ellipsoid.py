@@ -1,12 +1,10 @@
 import math
 import numpy
-# import dispy
-# import cProfile
-import visualization
 import dictionary_surfacearea as dicsurfarea
+import visualization
+import timeit
 
-import timeit as timeit
-
+# initializes timer
 start = timeit.default_timer()
 
 
@@ -27,143 +25,129 @@ class Tetra:
         self.pos = position
 
 
-decimal = 5
-a = b = c = 1  # radius
-smoothness = dx = dy = dz = 0.15  # smoothness
-dr = math.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
-ne = 3
-nx = int(2 * a / dx + ne)
-ny = int(2 * b / dy + ne)
-nz = int(2 * c / dz + ne)
-
-cx = int(nx / 2)
-cy = int(ny / 2)
-cz = int(nz / 2)
-voxel = numpy.zeros((nx, ny, nz), dtype=int)
-voxel_n = nx * ny * nz
-voxel_db = numpy.empty((voxel_n, 26), dtype=object)
-g_coord = -1
-side_exposed = -1
-
-
-# cProfile.run('main()')
-
-
-def main():
-    global voxel
-    global voxel_n
-    global voxel_db
-    global g_coord
-    global side_exposed
-    calculate_surface_area = True
-    use_visualization = True
-    calculate_volume = True
-    tetra_mode = True
-
-    voxel_count = numpy.copy(voxel)
-    count = 0
-    divx = dx / 2.0
-    divy = dy / 2.0
-    divz = dz / 2.0
-    for k in range(nz):
+def build_figure(cx, cy, cz):
+    global count
+    global voxel_count
+    # builds figure
+    for i in range(nx):
         for j in range(ny):
-            for i in range(nx):
+            for k in range(nz):
                 voxel_count[i, j, k] = count
                 count = count + 1
                 if (((i - cx) / (a / dx)) ** 2) + (((j - cy) / (b / dy)) ** 2) + (((k - cz) / (c / dz)) ** 2) <= 1:
                     # if(i>(0.5*a/dx) and i<2*a/(dx) and j>(0.5*b/dx) and j<2*b/dx and k>0.5*c/dz and k<2*c/dz):
                     voxel[i, j, k] = 1
 
-    # Smoothen
-    # tagging the voxel on sides exposed
+
+# Smoothening
+# tagging the voxel on sides exposed
+def smoothening():
+    global count
+    global side_exposed
     side_exposed = numpy.copy(voxel)
-    for k in range(nz):
+    for i in range(nx):
+        x1 = i - 1
+        y1 = i + 1
         for j in range(ny):
-            for i in range(nx):
+            x2 = j - 1
+            y2 = j + 1
+            for k in range(nz):
+                x3 = k - 1
+                y3 = k + 1
                 if voxel[i, j, k] != 0:
                     count = 0
-                    if voxel[i - 1, j, k] == 0:
+                    if voxel[x1, j, k] == 0:
                         count = count + 1
-                    if voxel[i + 1, j, k] == 0:
+                    if voxel[y1, j, k] == 0:
                         count = count + 1
-                    if voxel[i, j - 1, k] == 0:
+                    if voxel[i, x2, k] == 0:
                         count = count + 1
-                    if voxel[i, j + 1, k] == 0:
+                    if voxel[i, y2, k] == 0:
                         count = count + 1
-                    if voxel[i, j, k - 1] == 0:
+                    if voxel[i, j, x3] == 0:
                         count = count + 1
-                    if voxel[i, j, k + 1] == 0:
+                    if voxel[i, j, y3] == 0:
                         count = count + 1
                     side_exposed[i, j, k] = count
 
-    # Removing 5 sides exposed cubes
-    for k in range(nz):
+
+# Removing 5 sides exposed cubes
+def remove_exposed():
+    global side_exposed
+    for i in range(nx):
         for j in range(ny):
-            for i in range(nx):
+            for k in range(nz):
                 if side_exposed[i, j, k] == 5:
                     voxel[i, j, k] = 0
                     side_exposed[i, j, k] = 0
 
-    # Recounting
-    for k in range(nz):
+
+# Recounting
+def recounting():
+    global count
+    for i in range(nx):
+        a1 = i - 1
+        b1 = i + 1
         for j in range(ny):
-            for i in range(nx):
+            a2 = j - 1
+            b2 = j + 1
+            for k in range(nz):
+                a3 = k - 1
+                b3 = k + 1
                 if voxel[i, j, k] != 0:
                     count = 0
-                    if voxel[i - 1, j, k] == 0:
+                    if voxel[a1, j, k] == 0:
                         count = count + 1
-                    if voxel[i + 1, j, k] == 0:
+                    if voxel[b1, j, k] == 0:
                         count = count + 1
-                    if voxel[i, j - 1, k] == 0:
+                    if voxel[i, a2, k] == 0:
                         count = count + 1
-                    if voxel[i, j + 1, k] == 0:
+                    if voxel[i, b2, k] == 0:
                         count = count + 1
-                    if voxel[i, j, k - 1] == 0:
+                    if voxel[i, j, a3] == 0:
                         count = count + 1
-                    if voxel[i, j, k + 1] == 0:
+                    if voxel[i, j, b3] == 0:
                         count = count + 1
                     side_exposed[i, j, k] = count
 
-    # Creating the coordinate matrix
-    # 0  : voxel(x,y,z)
-    # 1  : Material tag
 
-    # 2  : N1
-    # 3  : N2
-    # 4  : N3
-    # 5  : N4
+# 0  : voxel(x,y,z)
+# 1  : Material tag
+# 2  : N1
+# 3  : N2
+# 4  : N3
+# 5  : N4
+# 6  : S1
+# 7  : S2
+# 8  : S3
+# 9  : S4
+# 10 : W1
+# 11 : W2
+# 12 : W3
+# 13 : W4
+# 14 : E1
+# 15 : E2
+# 16 : E3
+# 17 : E4
+# 18 : F1
+# 19 : F2
+# 20 : F3
+# 21 : F4
+# 22 : B1
+# 23 : B2
+# 24 : B3
+# 25 : B4
 
-    # 6  : S1
-    # 7  : S2
-    # 8  : S3
-    # 9  : S4
 
-    # 10 : W1
-    # 11 : W2
-    # 12 : W3
-    # 13 : W4
-
-    # 14 : E1
-    # 15 : E2
-    # 16 : E3
-    # 17 : E4
-
-    # 18 : F1
-    # 19 : F2
-    # 20 : F3
-    # 21 : F4
-
-    # 22 : B1
-    # 23 : B2
-    # 24 : B3
-    # 25 : B4
-
+# Creating the coordinate matrix
+def create_matrix(decimal):
+    global g_coord
     v_count = 0
-    print("nz", nz)
-    print("ny", ny)
-    print("nx", nz)
-    print("v_count", v_count)
-    for i in range(nz):
+    divx = dx / 2.0
+    divy = dy / 2.0
+    divz = dz / 2.0
+
+    for i in range(nx):
         multi = i * dx
         for j in range(ny):
             multj = j * dy
@@ -238,8 +222,10 @@ def main():
 
                 v_count = v_count + 1
 
-    # Add centroid
 
+# Add centroid
+def add_centroid():
+    global g_coord
     g_coord = numpy.zeros((voxel_n, 24), dtype=object)
     for vc in range(voxel_n):
         for i in range(24):
@@ -251,184 +237,236 @@ def main():
                 vc, i + 2].p4.z) / 4
             g_coord[vc, i] = Coordinate(gx, gy, gz)
 
-    # Triangle smoothening
-    if tetra_mode is True:
-        v_count = 0
-        for k in range(nz):
-            for j in range(ny):
-                for i in range(nx):
-                    # Three Sides Exposed
-                    if side_exposed[i, j, k] > 1:
 
-                        # North Side
-                        if voxel[i, j, k + 1] == 0:
-                            voxel_db[v_count, 2].mat = 0
-                            voxel_db[v_count, 3].mat = 0
-                            voxel_db[v_count, 4].mat = 0
-                            voxel_db[v_count, 5].mat = 0
+# Triangle smoothening
+def triangle_smoothening():
+    v_count = 0
+    for i in range(nx):
+        for j in range(ny):
+            for k in range(nz):
+                # Three Sides Exposed
+                if side_exposed[i, j, k] > 1:
 
-                            if side_exposed[i, j + 1, k] > 1:
-                                voxel_db[v_count, 14].mat = 0
-                            if side_exposed[i, j - 1, k] > 1:
-                                voxel_db[v_count, 10].mat = 0
-                            if side_exposed[i + 1, j, k] > 1:
-                                voxel_db[v_count, 18].mat = 0
-                            if side_exposed[i - 1, j, k] > 1:
-                                voxel_db[v_count, 22].mat = 0
+                    # North Side
+                    if voxel[i, j, k + 1] == 0:
+                        voxel_db[v_count, 2].mat = 0
+                        voxel_db[v_count, 3].mat = 0
+                        voxel_db[v_count, 4].mat = 0
+                        voxel_db[v_count, 5].mat = 0
 
-                        # South Side
-                        if voxel[i, j, k - 1] == 0:
-                            voxel_db[v_count, 6].mat = 0
-                            voxel_db[v_count, 7].mat = 0
-                            voxel_db[v_count, 8].mat = 0
-                            voxel_db[v_count, 9].mat = 0
-
-                            if side_exposed[i, j + 1, k] > 1:
-                                voxel_db[v_count, 16].mat = 0
-                            if side_exposed[i, j - 1, k] > 1:
-                                voxel_db[v_count, 12].mat = 0
-                            if side_exposed[i + 1, j, k] > 1:
-                                voxel_db[v_count, 20].mat = 0
-                            if side_exposed[i - 1, j, k] > 1:
-                                voxel_db[v_count, 24].mat = 0
-
-                        # West Side
-                        if voxel[i, j - 1, k] == 0:
-                            voxel_db[v_count, 10].mat = 0
-                            voxel_db[v_count, 11].mat = 0
-                            voxel_db[v_count, 12].mat = 0
-                            voxel_db[v_count, 13].mat = 0
-
-                            if side_exposed[i, j, k + 1] > 1:
-                                voxel_db[v_count, 3].mat = 0
-                            if side_exposed[i, j, k - 1] > 1:
-                                voxel_db[v_count, 7].mat = 0
-                            if side_exposed[i + 1, j, k] > 1:
-                                voxel_db[v_count, 19].mat = 0
-                            if side_exposed[i - 1, j, k] > 1:
-                                voxel_db[v_count, 25].mat = 0
-
-                        # East Side
-                        if voxel[i, j + 1, k] == 0:
+                        if side_exposed[i, j + 1, k] > 1:
                             voxel_db[v_count, 14].mat = 0
-                            voxel_db[v_count, 15].mat = 0
-                            voxel_db[v_count, 16].mat = 0
-                            voxel_db[v_count, 17].mat = 0
-
-                            if side_exposed[i, j, k + 1] > 1:
-                                voxel_db[v_count, 5].mat = 0
-                            if side_exposed[i, j, k - 1] > 1:
-                                voxel_db[v_count, 9].mat = 0
-                            if side_exposed[i + 1, j, k] > 1:
-                                voxel_db[v_count, 21].mat = 0
-                            if side_exposed[i - 1, j, k] > 1:
-                                voxel_db[v_count, 23].mat = 0
-
-                        # Front Side
-                        if voxel[i + 1, j, k] == 0:
+                        if side_exposed[i, j - 1, k] > 1:
+                            voxel_db[v_count, 10].mat = 0
+                        if side_exposed[i + 1, j, k] > 1:
                             voxel_db[v_count, 18].mat = 0
-                            voxel_db[v_count, 19].mat = 0
-                            voxel_db[v_count, 20].mat = 0
-                            voxel_db[v_count, 21].mat = 0
-
-                            if side_exposed[i, j + 1, k] > 1:
-                                voxel_db[v_count, 15].mat = 0
-                            if side_exposed[i, j - 1, k] > 1:
-                                voxel_db[v_count, 13].mat = 0
-                            if side_exposed[i, j, k + 1] > 1:
-                                voxel_db[v_count, 4].mat = 0
-                            if side_exposed[i, j, k - 1] > 1:
-                                voxel_db[v_count, 8].mat = 0
-
-                        # Back Side
-                        if voxel[i - 1, j, k] == 0:
+                        if side_exposed[i - 1, j, k] > 1:
                             voxel_db[v_count, 22].mat = 0
-                            voxel_db[v_count, 23].mat = 0
+
+                    # South Side
+                    if voxel[i, j, k - 1] == 0:
+                        voxel_db[v_count, 6].mat = 0
+                        voxel_db[v_count, 7].mat = 0
+                        voxel_db[v_count, 8].mat = 0
+                        voxel_db[v_count, 9].mat = 0
+
+                        if side_exposed[i, j + 1, k] > 1:
+                            voxel_db[v_count, 16].mat = 0
+                        if side_exposed[i, j - 1, k] > 1:
+                            voxel_db[v_count, 12].mat = 0
+                        if side_exposed[i + 1, j, k] > 1:
+                            voxel_db[v_count, 20].mat = 0
+                        if side_exposed[i - 1, j, k] > 1:
                             voxel_db[v_count, 24].mat = 0
+
+                    # West Side
+                    if voxel[i, j - 1, k] == 0:
+                        voxel_db[v_count, 10].mat = 0
+                        voxel_db[v_count, 11].mat = 0
+                        voxel_db[v_count, 12].mat = 0
+                        voxel_db[v_count, 13].mat = 0
+
+                        if side_exposed[i, j, k + 1] > 1:
+                            voxel_db[v_count, 3].mat = 0
+                        if side_exposed[i, j, k - 1] > 1:
+                            voxel_db[v_count, 7].mat = 0
+                        if side_exposed[i + 1, j, k] > 1:
+                            voxel_db[v_count, 19].mat = 0
+                        if side_exposed[i - 1, j, k] > 1:
                             voxel_db[v_count, 25].mat = 0
 
-                            if side_exposed[i, j + 1, k] > 1:
-                                voxel_db[v_count, 17].mat = 0
-                            if side_exposed[i, j - 1, k] > 1:
-                                voxel_db[v_count, 11].mat = 0
-                            if side_exposed[i, j, k + 1] > 1:
-                                voxel_db[v_count, 2].mat = 0
-                            if side_exposed[i, j, k - 1] > 1:
-                                voxel_db[v_count, 6].mat = 0
+                    # East Side
+                    if voxel[i, j + 1, k] == 0:
+                        voxel_db[v_count, 14].mat = 0
+                        voxel_db[v_count, 15].mat = 0
+                        voxel_db[v_count, 16].mat = 0
+                        voxel_db[v_count, 17].mat = 0
 
-                    v_count = v_count + 1
+                        if side_exposed[i, j, k + 1] > 1:
+                            voxel_db[v_count, 5].mat = 0
+                        if side_exposed[i, j, k - 1] > 1:
+                            voxel_db[v_count, 9].mat = 0
+                        if side_exposed[i + 1, j, k] > 1:
+                            voxel_db[v_count, 21].mat = 0
+                        if side_exposed[i - 1, j, k] > 1:
+                            voxel_db[v_count, 23].mat = 0
 
-    # Visualization
-    if use_visualization is True:
-        visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
+                    # Front Side
+                    if voxel[i + 1, j, k] == 0:
+                        voxel_db[v_count, 18].mat = 0
+                        voxel_db[v_count, 19].mat = 0
+                        voxel_db[v_count, 20].mat = 0
+                        voxel_db[v_count, 21].mat = 0
 
-    # Calculate the surface area
-    if calculate_surface_area is True:
-        d = 0
-        first_area_sum = 0.0
-        for k in range(nz):
-            for j in range(ny):
-                for i in range(nx):
-                    if side_exposed[i, j, k] != 0:
-                        for m in range(2, 26):
-                            if voxel_db[d, m].mat != 0:
-                                first_area_sum = first_area_sum + dicsurfarea.func(voxel_db[d, m].pos, voxel_db, d, nx,
-                                                                                   ny, nz, dx,
-                                                                                   voxel_db[d, m].mat)
-                    d = d + 1
-        print("Tetra Area = ", first_area_sum)
+                        if side_exposed[i, j + 1, k] > 1:
+                            voxel_db[v_count, 15].mat = 0
+                        if side_exposed[i, j - 1, k] > 1:
+                            voxel_db[v_count, 13].mat = 0
+                        if side_exposed[i, j, k + 1] > 1:
+                            voxel_db[v_count, 4].mat = 0
+                        if side_exposed[i, j, k - 1] > 1:
+                            voxel_db[v_count, 8].mat = 0
 
-        voxel_area = 0
-        for k in range(nz):
-            for j in range(ny):
-                for i in range(nx):
-                    if voxel[i, j, k] == 1:
-                        voxel_area = side_exposed[i, j, k] + voxel_area
-        main_area_sum = 4 * math.pi * (((a * b) ** 1.6 + (a * c) ** 1.6 + (b * c) ** 1.6) / 3.0) ** (1 / 1.6)
-        print("Actual Area = ", main_area_sum)
-        voxel_area = voxel_area * dx * dx
-        print("voxel area = ", voxel_area)
+                    # Back Side
+                    if voxel[i - 1, j, k] == 0:
+                        voxel_db[v_count, 22].mat = 0
+                        voxel_db[v_count, 23].mat = 0
+                        voxel_db[v_count, 24].mat = 0
+                        voxel_db[v_count, 25].mat = 0
 
-    # Calculate volume
-    if calculate_volume is True:
+                        if side_exposed[i, j + 1, k] > 1:
+                            voxel_db[v_count, 17].mat = 0
+                        if side_exposed[i, j - 1, k] > 1:
+                            voxel_db[v_count, 11].mat = 0
+                        if side_exposed[i, j, k + 1] > 1:
+                            voxel_db[v_count, 2].mat = 0
+                        if side_exposed[i, j, k - 1] > 1:
+                            voxel_db[v_count, 6].mat = 0
 
-        volume = 0
-        print("voxel_n is", voxel_n)
-        # print("vc is", vc)
-        for vc in range(voxel_n):
-            for i in range(2, 26):
-                # print("voxel value", voxel_db[vc, i])
-                if voxel_db[vc, i].mat == 1:
-                    volume = volume + 1
-        if volume == 0:
-            raise ValueError('Error, 0 volume!')
-        print("Vals")
-        print(volume, dx, dy, dz)
-        tetra_volume = volume * dx * dy * dz / 24
-        print("\ntetra volume = ", tetra_volume)
-
-        voxel_volume = 0
-        for k in range(nz):
-            for j in range(ny):
-                for i in range(nx):
-                    if voxel[i, j, k] == 1:
-                        voxel_volume = voxel_volume + dx * dy * dz
-
-        print("voxel volume = ", voxel_volume)
-
-        main_volume = 4 / 3 * math.pi * a * b * c
-        print("actual volume = ", main_volume, "\n")
+                v_count = v_count + 1
 
 
-# stop = timeit.default_timer()
-# print("dx = ",dx,"time = ",stop-start,"seconds")
-# print("domain size =",voxel_n*24)
-# print("matrix size =",voxel_n*24*voxel_n*24)
+# Calculate the surface area
+def calc_surface_area():
+    global area_sum
+    d = 0
+    area_sum = 0.0
+    for i in range(nx):
+        for j in range(ny):
+            for k in range(nz):
+                if side_exposed[i, j, k] != 0:
+                    for m in range(2, 26):
+                        if voxel_db[d, m].mat != 0:
+                            area_sum = area_sum + dicsurfarea.func(voxel_db[d, m].pos, voxel_db, d, nx, ny, dx,
+                                                                   voxel_db[d, m].mat)
+                d = d + 1
+    print("Tetra Area = ", area_sum)
+
+    voxelarea = float(0)
+    for i in range(nx):
+        for j in range(ny):
+            for k in range(nz):
+                if voxel[i, j, k] == 1:
+                    voxelarea = side_exposed[i, j, k] + voxelarea
+    actualarea = float(4 * math.pi * (((a * b) ** 1.6 + (a * c) ** 1.6 + (b * c) ** 1.6) / 3.0) ** (1 / 1.6))
+    print("Actual Area = ", actualarea)
+    voxelarea = voxelarea * dx * dx
+    print("voxel area = ", voxelarea)
+
+
+# Calculate volume
+def calc_volume():
+    global tetra_volume
+    global voxel_volume
+    volume = 0
+    # print("vc is", vc)
+    for vc in range(voxel_n):
+        for i in range(2, 26):
+            # print("voxel value", voxel_db[vc, i])
+            if voxel_db[vc, i].mat == 1:
+                volume = volume + 1
+    if volume == 0:
+        raise ValueError('Error, 0 volume!')
+
+    tetra_volume = volume * dx * dy * dz / 24
+    print("\ntetra volume = ", tetra_volume)
+
+    voxel_volume = float(0)
+    for i in range(nx):
+        for j in range(ny):
+            for k in range(nz):
+                if voxel[i, j, k] == 1:
+                    voxel_volume = voxel_volume + dx * dy * dz
+
+    print("voxel volume = ", voxel_volume)
+    actualvolume = 4 / 3 * math.pi * a * b * c
+    print("actual volume = ", actualvolume, "\n")
+
+
+# stops timer and displays the calculated values
+def print_val():
+    stop = timeit.default_timer()
+    print("dx = ", dx, "time = ", stop - start, "seconds")
+    print("domain size =", voxel_n * 24)
+    print("matrix size =", voxel_n * 24 * voxel_n * 24)
+    print("Completed Successfully.")
+
 
 # Steady State Heat Transfer Solver
+# def voxeldatabase():
+#   return voxel_db, voxel, dx, dy, dz, voxel_n, G
 
-def voxel_database():
-    return voxel_db, voxel, dx, dy, dz, voxel_n, g_coord
+# ---------------------------------------------
+# declares variables and starts the program
+# ----------------------------------------------
+ne = 3
+a = 1
+b = 1
+c = 1
+dx = 0.15
+dy = 0.15
+dz = 0.15
+nx = int(2 * a / dx + ne)
+ny = int(2 * b / dy + ne)
+nz = int(2 * c / dz + ne)
+count = 0
+voxel = numpy.zeros((nx, ny, nz), dtype=int)
+voxel_n = nx * ny * nz
+voxel_db = numpy.empty((voxel_n, 26), dtype=object)
+voxel_count = numpy.copy(voxel)
+side_exposed = voxel_count
+g_coord = -1
+tetra_volume = -1
+voxel_volume = -1
+area_sum = -1
+
+
+def main():
+    decimal = 5
+    cx = int(nx / 2)
+    cy = int(ny / 2)
+    cz = int(nz / 2)
+    calculate_surface_area = True
+    use_visualization = True
+    calculate_volume = True
+    tetra_mode = True
+
+    # runs the methods declared above
+    build_figure(cx, cy, cz)
+    smoothening()  # phase 1
+    remove_exposed()  # phase 2
+    recounting()  # phase 3
+    create_matrix(decimal)  # phase 4
+    add_centroid()  # phase 4
+    if tetra_mode is True:
+        triangle_smoothening()  # phase 2
+    if calculate_surface_area is True:
+        calc_surface_area()  # phase 5
+    if calculate_volume is True:
+        calc_volume()  # phase 5
+    print_val()  # phase 6
+    if use_visualization is True:
+        visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
 
 
 if __name__ == "__main__":

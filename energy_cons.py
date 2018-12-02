@@ -1,27 +1,26 @@
 # Energy Conservation Crosscheck
 import faulthandler
-import numpy as np
-import matplotlib.pyplot as plt
-import math as mt
+import numpy
+import matplotlib.pyplot as pyplot
+import math
 import Ellipsoid as Ellipse
 import Test3D as Vox
 import Implicit_steady_state_heat_transfer_solver as steadyStateHeatTransfer
-
 # import sys
 # import matplotlib
 faulthandler.enable()
-# matplotlib.use('Agg')
-# t_count = 0
 voxel_mat = Vox.dom
 outer_g = Ellipse.g_coord
 ua_test_voxel = Vox.UA_v
 ua_test_tetra = steadyStateHeatTransfer.UA  # .todense()
 Q_test_tetra = steadyStateHeatTransfer.Q
 Q_test_voxel = Vox.Q
+# matplotlib.use('Agg')
+# t_count = 0
 
 
 def perp_diffmat(vc1, t1, vc2, t2, dx, g, k1, h):
-    l_val = mt.sqrt((g[vc1, t1].x - g[vc2, t2].x) ** 2 + (g[vc1, t1].y - g[vc2, t2].y) ** 2 + (
+    l_val = math.sqrt((g[vc1, t1].x - g[vc2, t2].x) ** 2 + (g[vc1, t1].y - g[vc2, t2].y) ** 2 + (
             g[vc1, t1].z - g[vc2, t2].z) ** 2) / 2
     ua_perp = 1 / (l_val / k1 + 1 / h) * (0.25 * dx ** 2)
     #    global t_count
@@ -33,8 +32,10 @@ def perp_diffmat(vc1, t1, vc2, t2, dx, g, k1, h):
 
 
 def side_diffmat(vc1, t1, vc2, t2, dx, inner_g, k1, h):
-    l_val = mt.sqrt((inner_g[vc1, t1].x - inner_g[vc2, t2].x) ** 2 + (inner_g[vc1, t1].y - inner_g[vc2, t2].y) ** 2 + (
-            inner_g[vc1, t1].z - inner_g[vc2, t2].z) ** 2) / 2
+    l_val = \
+        math.sqrt((inner_g[vc1, t1].x - inner_g[vc2, t2].x) ** 2
+                  + (inner_g[vc1, t1].y - inner_g[vc2, t2].y) ** 2
+                  + (inner_g[vc1, t1].z - inner_g[vc2, t2].z) ** 2) / 2
     us_side = 1 / (l_val / k1 + 1 / h) * (0.17677 * dx ** 2)
     #    global t_count
     #    t_count = t_count + 1
@@ -43,8 +44,10 @@ def side_diffmat(vc1, t1, vc2, t2, dx, inner_g, k1, h):
 
 
 def diag_diffmat(vc1, t1, vc2, t2, dx, inner_g, k1, h):
-    l_val = mt.sqrt((inner_g[vc1, t1].x - inner_g[vc2, t2].x) ** 2 + (inner_g[vc1, t1].y - inner_g[vc2, t2].y) ** 2 + (
-            inner_g[vc1, t1].z - inner_g[vc2, t2].z) ** 2) / 2
+    l_val = \
+        math.sqrt((inner_g[vc1, t1].x - inner_g[vc2, t2].x) ** 2
+                  + (inner_g[vc1, t1].y - inner_g[vc2, t2].y) ** 2
+                  + (inner_g[vc1, t1].z - inner_g[vc2, t2].z) ** 2) / 2
     ua_diag = 1 / (l_val / k1 + 1 / h) * (0.3535 * dx ** 2)
     #    global t_count
     #    t_count = t_count + 1
@@ -53,6 +56,7 @@ def diag_diffmat(vc1, t1, vc2, t2, dx, inner_g, k1, h):
 
 
 Temp = steadyStateHeatTransfer.Tdomtetra
+
 Tvox = Vox.Tdom
 
 Ts = []
@@ -830,7 +834,7 @@ def b4(voxel_db, p, dx, mat, k_val, htc):
         q_tetra.append(inner_q)
 
 
-def func(tag, voxel_db, p, nx, ny, nz, dx, mat, k_val, htc):
+def func(tag, voxel_db, p, nx, ny, dx, mat, k_val, htc):
     if tag == 'N1':
         n1(voxel_db, p, nx, ny, dx, mat, k_val, htc)
     elif tag == 'N2':
@@ -889,24 +893,26 @@ def func(tag, voxel_db, p, nx, ny, nz, dx, mat, k_val, htc):
 for vc in range(Ellipse.voxel_n):
     for i in range(24):
         if Ellipse.voxel_db[vc, i + 2].mat != 0:
-            func(Ellipse.voxel_db[vc, i + 2].pos, Ellipse.voxel_db, vc, Ellipse.nx, Ellipse.ny, Ellipse.nz, Ellipse.dx,
+            func(Ellipse.voxel_db[vc, i + 2].pos, Ellipse.voxel_db, vc, Ellipse.nx, Ellipse.ny, Ellipse.dx,
                  Ellipse.voxel_db[vc, i + 2].mat, steadyStateHeatTransfer.k_val, steadyStateHeatTransfer.HTC)
 
+
 Tsa = steadyStateHeatTransfer.Heat_rate * Ellipse.a / (3 * steadyStateHeatTransfer.HTC) + steadyStateHeatTransfer.Tamb
-# plt.plot(Ts)
-# plt.axhline(Tsa,color='red')
-# plt.show()
+# pyplot.plot(Ts)
+# pyplot.axhline(Tsa,color='red')
+# pyplot.show()
 
 error = []
 for i in range(len(Ts)):
     error.append(Tsa - Ts[i])
 
-# plt.boxplot(error)
-# plt.show()
+# pyplot.boxplot(error)
+# pyplot.show()
 
 
 # voxelplot = 1
 # if(voxelplot == 1):
+
 
 errv = []
 for k in range(Vox.n):
@@ -914,9 +920,12 @@ for k in range(Vox.n):
         for i in range(Vox.n):
             if Vox.dom[i, j, k] == 1:
                 if Vox.side_exposed[i, j, k] > 0:
-                    tt_valv = (Vox.Tdom[i, j, k] + (steadyStateHeatTransfer.HTC * (
-                                Ellipse.dx / 2) / steadyStateHeatTransfer.k_val) * steadyStateHeatTransfer.Tamb) / (
-                                      1 + steadyStateHeatTransfer.HTC * (Ellipse.dx / 2) / steadyStateHeatTransfer.k_val)
+                    tt_valv = \
+                        (Vox.Tdom[i, j, k]
+                         + (steadyStateHeatTransfer.HTC
+                            * (Ellipse.dx / 2) / steadyStateHeatTransfer.k_val)
+                            * steadyStateHeatTransfer.Tamb) / (1 + steadyStateHeatTransfer.HTC
+                                                               * (Ellipse.dx / 2) / steadyStateHeatTransfer.k_val)
                     Tsv.append(tt_valv)
                     errv.append(Tsa - tt_valv)
                     outer_ua = \
@@ -928,61 +937,61 @@ for k in range(Vox.n):
 data = [error, errv]
 labels = ["Tetrahedrons", "Voxels"]
 
-plt.figure(figsize=(10, 6))
-plt.subplot(121)
-bplot = plt.boxplot(data, vert=True, patch_artist=True, labels=labels)
+pyplot.figure(figsize=(10, 6))
+pyplot.subplot(121)
+bplot = pyplot.boxplot(data, vert=True, patch_artist=True, labels=labels)
 colors = ['pink', 'lightblue']
 for patch, color in zip(bplot['boxes'], colors):
     patch.set_facecolor(color)
-    plt.grid(color='grey')
-    plt.ylabel("Surface Temperature Error in degrees Celsius")
+    pyplot.grid(color='grey')
+    pyplot.ylabel("Surface Temperature Error in degrees Celsius")
 
 x_t = []
 x_v = []
 t = 1
 for i in range(len(Ts)):
-    x_t.append((4 * mt.pi * 0.1 ** 2) / t)
+    x_t.append((4 * math.pi * 0.1 ** 2) / t)
     t = t + 1
 t = 1
 for i in range(len(Tsv)):
-    x_v.append((4 * mt.pi * 0.1 ** 2) / t)
+    x_v.append((4 * math.pi * 0.1 ** 2) / t)
     t = t + 1
 
-# plt.figure(figsize = (10,6))
-plt.subplot(122)
-# plt.plot(x_t,Ts,label = "Tetra")
-# plt.plot(x_v,Tsv,label = "Voxel")
-plt.axhline(np.mean(Ts), label="Mean Tetra", color="g_valreen")
-plt.axhline(np.mean(Tsv), label="Mean Voxel", color="Purple")
-plt.axhline(Tsa, color="red", label="Analytical")
-plt.yticks(np.arange(steadyStateHeatTransfer.Tamb - 2, Tsa + 2, 2))
-plt.ylabel("Surface Temperature")
-plt.legend()
-# plt.savefig("Results_1mm_R10cm.png")
-plt.show()
-plt.show()
+# pyplot.figure(figsize = (10,6))
+pyplot.subplot(122)
+# pyplot.plot(x_t,Ts,label = "Tetra")
+# pyplot.plot(x_v,Tsv,label = "Voxel")
+pyplot.axhline(numpy.mean(Ts), label="Mean Tetra", color="g_valreen")
+pyplot.axhline(numpy.mean(Tsv), label="Mean Voxel", color="Purple")
+pyplot.axhline(Tsa, color="red", label="Analytical")
+pyplot.yticks(numpy.arange(steadyStateHeatTransfer.Tamb - 2, Tsa + 2, 2))
+pyplot.ylabel("Surface Temperature")
+pyplot.legend()
+# pyplot.savefig("Results_1mm_R10cm.png")
+pyplot.show()
+pyplot.show()
 
 print("\nAnalytical Ts =", Tsa)
-print("\nMean Ts tetra", np.mean(Ts))
-print("Mean Ts Voxel", np.mean(Tsv), "\n")
+print("\nMean Ts tetra", numpy.mean(Ts))
+print("Mean Ts Voxel", numpy.mean(Tsv), "\n")
 
-print("Tetrahedron error =", steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume - np.sum(q_tetra))
+print("Tetrahedron error =", steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume - numpy.sum(q_tetra))
 print("Heart rate = ", steadyStateHeatTransfer.Heat_rate)
 print("tetra_volume = ", Ellipse.tetra_volume)
 print("percentage error = ",
-      (steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume - np.sum(q_tetra)) / (
+      (steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume - numpy.sum(q_tetra)) / (
                   steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume) * 100, "%")
 print("Tetra T_surf for given", steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume / (
-            Ellipse.areasum1 * steadyStateHeatTransfer.HTC) + steadyStateHeatTransfer.Tamb)
+            Ellipse.area_sum * steadyStateHeatTransfer.HTC) + steadyStateHeatTransfer.Tamb)
 
-print("voxel error =", steadyStateHeatTransfer.Heat_rate * Ellipse.voxel_volume - np.sum(q_vox), "W")
+print("voxel error =", steadyStateHeatTransfer.Heat_rate * Ellipse.voxel_volume - numpy.sum(q_vox), "W")
 print("Voxel heat error percentage =",
-      (steadyStateHeatTransfer.Heat_rate * Ellipse.voxel_volume - np.sum(
+      (steadyStateHeatTransfer.Heat_rate * Ellipse.voxel_volume - numpy.sum(
           q_vox)) / steadyStateHeatTransfer.Heat_rate * Ellipse.voxel_volume * 100, "%")
 
 print("\nActual tetra Q = ", steadyStateHeatTransfer.Heat_rate * Ellipse.tetra_volume)
-print("Tetra Q =  ", np.sum(q_tetra))
-print("voxel Q =  ", np.sum(q_vox))
+print("Tetra Q =  ", numpy.sum(q_tetra))
+print("voxel Q =  ", numpy.sum(q_vox))
 
 test_tetra = 0
 for i in range(len(Q_test_tetra)):
