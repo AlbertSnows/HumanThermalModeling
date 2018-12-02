@@ -395,8 +395,8 @@ def display_visual(use_visualization):
         visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
 
 # Steady State Heat Transfer Solver
-def voxeldatabase():
-    return voxel_db, voxel, dx, dy, dz, voxel_n, G
+#def voxeldatabase():
+#    return voxel_db, voxel, dx, dy, dz, voxel_n, G
 
 #---------------------------------------------
 # declares variables and starts the program

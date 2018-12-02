@@ -394,8 +394,8 @@ def display_visual(use_visualization):
         visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
 
 # Steady State Heat Transfer Solver
-def voxeldatabase():
-    return voxel_db, voxel, dx, dy, dz, voxel_n, G
+#def voxeldatabase():
+#    return voxel_db, voxel, dx, dy, dz, voxel_n, G
 
 #---------------------------------------------
 # declares variables and starts the program
@@ -444,18 +444,20 @@ side_exposed = smoothening() #phase 1
 remove_exposed(side_exposed) #phase 2
 voxel_n = recounting() #phase 3
 create_matrix(voxel_n) #phase 4
-triangle_smoothening() #phase 5
 
 # multiprocessing
 if __name__ == "__main__":
+    phase5 = mproc.Process(target=triangle_smoothening)
     phase6 = mproc.Process(target=add_centroid)
     phase7 = mproc.Process(target=calc_surface_area)
     phase8 = mproc.Process(target=calc_volume)
 
+    phase5.start()
     phase6.start()
     phase7.start()
     phase8.start()
   
+    phase5.join()
     phase6.join()
     phase7.join()
     phase8.join()
