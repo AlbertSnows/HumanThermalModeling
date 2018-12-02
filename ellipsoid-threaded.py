@@ -512,9 +512,10 @@ def main():
     calculate_surface_area = True
     calculate_volume = True
     tetra_mode = True
-    tri_smo_t = threading.Thread(target=triangle_smoothening)
-    add_cent_t = threading.Thread(target=add_centroid)
-    cal_sur_a_t = threading.Thread(target=calc_surface_area)
+    triangle_smooth_t = threading.Thread(target=triangle_smoothening)
+    create_matrix_t = threading.Thread(target=create_matrix(decimal))
+    add_centroid_t = threading.Thread(target=add_centroid)
+    calc_surf_area_t = threading.Thread(target=calc_surface_area)
     calc_vol_t = threading.Thread(target=calc_volume)
 
     # runs the methods declared above
@@ -522,18 +523,20 @@ def main():
     smoothening()  # phase 1
     remove_exposed()  # phase 2
     recounting()  # phase 3
+    create_matrix_t.start()
     create_matrix(decimal)  # phase 4
-    add_cent_t.start()
+    create_matrix_t.join()
+    add_centroid_t.start()
     add_centroid()  # phase 4
-    add_cent_t.join()
+    add_centroid_t.join()
     if tetra_mode is True:
-        tri_smo_t.start()
+        triangle_smooth_t.start()
         triangle_smoothening()  # phase 2
-        tri_smo_t.join()
+        triangle_smooth_t.join()
     if calculate_surface_area is True:
-        cal_sur_a_t.start()
+        calc_surf_area_t.start()
         calc_surface_area()  # phase 5
-        cal_sur_a_t.join()
+        calc_surf_area_t.join()
     if calculate_volume is True:
         calc_vol_t.start()
         calc_volume()  # phase 5
@@ -543,10 +546,10 @@ def main():
 # multipthreading
 if __name__ == "__main__":
     use_visualization = True
-    phase0 = threading.Thread(target=main())
-    phase0.start()
+    main_thread = threading.Thread(target=main())
+    main_thread.start()
     main()
-    phase0.join()
+    main_thread.join()
     print_val()  # phase 6
     if use_visualization is True:
         visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
