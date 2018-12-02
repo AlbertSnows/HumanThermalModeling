@@ -3,7 +3,7 @@ import numpy as np
 #import matplotlib.pyplot as plt
 #import timeit as time
 import Implicit_steady_state_heat_transfer_solver as isht
-import Ellipsoid as ellip
+import Ellipsoid_optimized_full as ellip
 #import math as mth
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
