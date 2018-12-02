@@ -310,7 +310,7 @@ def b4(voxel_db, p, dx, mat, sumarea):
     return sumarea
 
 
-def func(tag, voxel_db, p, nx, ny, nz, dx, mat):
+def func(tag, voxel_db, p, nx, ny, dx, mat):
     sumarea = 0.0
     if tag == 'n1':
         sumarea = n1(voxel_db, p, nx, ny, dx, mat, sumarea)

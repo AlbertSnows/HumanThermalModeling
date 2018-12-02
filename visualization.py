@@ -1,6 +1,7 @@
 import vtk
 import time
 
+
 # Visualization
 def visualize(voxel_db, side_exposed, nx, ny, nz):
     # Create a renderer, render window, and interactor

@@ -1402,7 +1402,7 @@ def b4(voxel_db, p, dx, mat, g_val, htc, k_val, q, q_val, i_cor, j_cor, ua_data)
     q_val.append(-q)
 
 
-def func(tag, voxel_db, p, nx, ny, nz, dx, mat, g_val, htc, k_val, q, q_val, poi, i_cor, j_cor, ua_data):
+def func(tag, voxel_db, p, nx, ny, dx, mat, g_val, htc, k_val, q, q_val, i_cor, j_cor, ua_data):
     if tag == 'n1':
         (n1(voxel_db, p, nx, ny, dx, mat, g_val, htc, k_val, q, q_val, i_cor, j_cor, ua_data))
     elif tag == 'n2':
@@ -1470,7 +1470,7 @@ def matrixgenerator(voxel_db, k_val, htc, dx, g_val, nx, ny, nz, q, tamb):
         for j in range(ny):
             for i in range(nx):
                 for t in range(24):
-                    poi = 24 * i + 24 * ny * j + 24 * ny * nz * k + t
+                    # poi = 24 * i + 24 * ny * j + 24 * ny * nz * k + t
                     if voxel_db[vc, t + 2].mat == 0:
                         i_cor.append(vc * 24 + t)
                         j_cor.append(vc * 24 + t)
@@ -1480,9 +1480,9 @@ def matrixgenerator(voxel_db, k_val, htc, dx, g_val, nx, ny, nz, q, tamb):
                     if voxel_db[vc, t + 2].mat == 1:
                         loc = voxel_db[vc, (t + 2)].pos
                         func(loc, voxel_db,
-                             vc, nx, ny, nz, dx,
+                             vc, nx, ny, dx,
                              voxel_db[vc, (t + 2)].mat,
-                             g_val, htc, k_val, q, q_val, poi, i_cor,
+                             g_val, htc, k_val, q, q_val, i_cor,
                              j_cor, ua_data)
 
                 vc = vc + 1
