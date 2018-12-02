@@ -7,7 +7,7 @@ import numpy as np
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import math as mt
-import Ellipsoid as ellipse
+import ellipsoid_optimized_full as ellipse
 import Test3D as vox
 import Implicit_steady_state_heat_transfer_solver as ssht
 #import sys

@@ -1,8 +1,9 @@
 import math
 import numpy
-import dictionary_surfacearea as dicsurfarea
+import dictionary_surfacearea as dict_surf_area
 import visualization
 import timeit
+import threading
 
 # initializes timer
 start = timeit.default_timer()
@@ -142,6 +143,7 @@ def recounting():
 # Creating the coordinate matrix
 def create_matrix(decimal):
     global g_coord
+    global voxel_db
     v_count = 0
     divx = dx / 2.0
     divy = dy / 2.0
@@ -157,68 +159,123 @@ def create_matrix(decimal):
                 voxel_db[v_count, 1] = voxel[i, j, k]
 
                 # Breaking down the i,j,k in vertex coordinates
-                a_coord = Coordinate(round((multi - divx), decimal), round((multj + divy), decimal),
-                                     round((multk + divz), decimal))
-                b_coord = Coordinate(round((multi - divx), decimal), round((multj - divy), decimal),
-                                     round((multk + divz), decimal))
-                c_coord = Coordinate(round((multi + divx), decimal), round((multj - divy), decimal),
-                                     round((multk + divz), decimal))
-                d_coord = Coordinate(round((multi + divx), decimal), round((multj + divy), decimal),
-                                     round((multk + divz), decimal))
-                e_coord = Coordinate(round((multi - divx), decimal), round((multj + divy), decimal),
-                                     round((multk - divz), decimal))
-                f_coord = Coordinate(round((multi - divx), decimal), round((multj - divy), decimal),
-                                     round((multk - divz), decimal))
-                g_coord = Coordinate(round((multi + divx), decimal), round((multj - divy), decimal),
-                                     round((multk - divz), decimal))
-                h_coord = Coordinate(round((multi + divx), decimal), round((multj + divy), decimal),
-                                     round((multk - divz), decimal))
+                a_coord = \
+                    Coordinate(
+                        round((multi - divx), decimal),
+                        round((multj + divy), decimal),
+                        round((multk + divz), decimal))
+                b_coord = \
+                    Coordinate(
+                        round((multi - divx), decimal),
+                        round((multj - divy), decimal),
+                        round((multk + divz), decimal))
+                c_coord = \
+                    Coordinate(
+                        round((multi + divx), decimal),
+                        round((multj - divy), decimal),
+                        round((multk + divz), decimal))
+                d_coord = \
+                    Coordinate(
+                        round((multi + divx), decimal),
+                        round((multj + divy), decimal),
+                        round((multk + divz), decimal))
+                e_coord = \
+                    Coordinate(
+                        round((multi - divx), decimal),
+                        round((multj + divy), decimal),
+                        round((multk - divz), decimal))
+                f_coord = \
+                    Coordinate(
+                        round((multi - divx), decimal),
+                        round((multj - divy), decimal),
+                        round((multk - divz), decimal))
+                g_coord = \
+                    Coordinate(
+                        round((multi + divx), decimal),
+                        round((multj - divy), decimal),
+                        round((multk - divz), decimal))
+                h_coord = \
+                    Coordinate(
+                        round((multi + divx), decimal),
+                        round((multj + divy), decimal),
+                        round((multk - divz), decimal))
 
-                i_val = Coordinate(round(multi, decimal), round(multj, decimal), round(multk, decimal))
-                nc = Coordinate(round(multi, decimal), round(multj, decimal), round((multk + divz), decimal))
-                sc = Coordinate(round(multi, decimal), round(multj, decimal), round((multk - divz), decimal))
-                wc = Coordinate(round(multi, decimal), round((multj - divy), decimal), round(multk, decimal))
-                ec = Coordinate(round(multi, decimal), round((multj + divy), decimal), round(multk, decimal))
-                fc = Coordinate(round((multi + divx), decimal), round(multj, decimal), round(multk, decimal))
-                bc = Coordinate(round((multi - divx), decimal), round(multj, decimal), round(multk, decimal))
+                i_val = \
+                    Coordinate(round(multi, decimal), round(multj, decimal), round(multk, decimal))
+                nc = \
+                    Coordinate(round(multi, decimal), round(multj, decimal), round((multk + divz), decimal))
+                sc = \
+                    Coordinate(round(multi, decimal), round(multj, decimal), round((multk - divz), decimal))
+                wc = \
+                    Coordinate(round(multi, decimal), round((multj - divy), decimal), round(multk, decimal))
+                ec = \
+                    Coordinate(round(multi, decimal), round((multj + divy), decimal), round(multk, decimal))
+                fc = \
+                    Coordinate(round((multi + divx), decimal), round(multj, decimal), round(multk, decimal))
+                bc = \
+                    Coordinate(round((multi - divx), decimal), round(multj, decimal), round(multk, decimal))
                 mat_tag = voxel[i, j, k]
 
                 # North Tetras
 
-                voxel_db[v_count, 2] = Tetra(nc, a_coord, b_coord, i_val, mat_tag, 'N1')  # N1 coordinates 2
-                voxel_db[v_count, 3] = Tetra(nc, b_coord, c_coord, i_val, mat_tag, 'N2')  # N2 coordinates 3
-                voxel_db[v_count, 4] = Tetra(nc, c_coord, d_coord, i_val, mat_tag, 'N3')  # N3 coordinates 4
-                voxel_db[v_count, 5] = Tetra(nc, d_coord, a_coord, i_val, mat_tag, 'N4')  # N4 coordinates 5
+                voxel_db[v_count, 2] = \
+                    Tetra(nc, a_coord, b_coord, i_val, mat_tag, 'N1')  # N1 coordinates 2
+                voxel_db[v_count, 3] = \
+                    Tetra(nc, b_coord, c_coord, i_val, mat_tag, 'N2')  # N2 coordinates 3
+                voxel_db[v_count, 4] = \
+                    Tetra(nc, c_coord, d_coord, i_val, mat_tag, 'N3')  # N3 coordinates 4
+                voxel_db[v_count, 5] = \
+                    Tetra(nc, d_coord, a_coord, i_val, mat_tag, 'N4')  # N4 coordinates 5
 
                 # South Tetras
-                voxel_db[v_count, 6] = Tetra(sc, e_coord, f_coord, i_val, mat_tag, 'S1')  # S1 coordinates 6
-                voxel_db[v_count, 7] = Tetra(sc, f_coord, g_coord, i_val, mat_tag, 'S2')  # S2 coordinates 7
-                voxel_db[v_count, 8] = Tetra(sc, g_coord, h_coord, i_val, mat_tag, 'S3')  # S3 coordinates 8
-                voxel_db[v_count, 9] = Tetra(sc, h_coord, e_coord, i_val, mat_tag, 'S4')  # S4 coordinates 9
+                voxel_db[v_count, 6] = \
+                    Tetra(sc, e_coord, f_coord, i_val, mat_tag, 'S1')  # S1 coordinates 6
+                voxel_db[v_count, 7] = \
+                    Tetra(sc, f_coord, g_coord, i_val, mat_tag, 'S2')  # S2 coordinates 7
+                voxel_db[v_count, 8] = \
+                    Tetra(sc, g_coord, h_coord, i_val, mat_tag, 'S3')  # S3 coordinates 8
+                voxel_db[v_count, 9] = \
+                    Tetra(sc, h_coord, e_coord, i_val, mat_tag, 'S4')  # S4 coordinates 9
 
                 # West Tetras
-                voxel_db[v_count, 10] = Tetra(wc, c_coord, b_coord, i_val, mat_tag, 'W1')  # W1 coordinates 10
-                voxel_db[v_count, 11] = Tetra(wc, b_coord, f_coord, i_val, mat_tag, 'W2')  # W2 coordinates 11
-                voxel_db[v_count, 12] = Tetra(wc, f_coord, g_coord, i_val, mat_tag, 'W3')  # W3 coordinates 12
-                voxel_db[v_count, 13] = Tetra(wc, g_coord, c_coord, i_val, mat_tag, 'W4')  # W4 coordinates 13
+                voxel_db[v_count, 10] = \
+                    Tetra(wc, c_coord, b_coord, i_val, mat_tag, 'W1')  # W1 coordinates 10
+                voxel_db[v_count, 11] = \
+                    Tetra(wc, b_coord, f_coord, i_val, mat_tag, 'W2')  # W2 coordinates 11
+                voxel_db[v_count, 12] = \
+                    Tetra(wc, f_coord, g_coord, i_val, mat_tag, 'W3')  # W3 coordinates 12
+                voxel_db[v_count, 13] = \
+                    Tetra(wc, g_coord, c_coord, i_val, mat_tag, 'W4')  # W4 coordinates 13
 
                 # East Tetras
-                voxel_db[v_count, 14] = Tetra(ec, a_coord, d_coord, i_val, mat_tag, 'E1')  # E1 coordinates 14
-                voxel_db[v_count, 15] = Tetra(ec, d_coord, h_coord, i_val, mat_tag, 'E2')  # E2 coordinates 15
-                voxel_db[v_count, 16] = Tetra(ec, h_coord, e_coord, i_val, mat_tag, 'E3')  # E3 coordinates 16
-                voxel_db[v_count, 17] = Tetra(ec, e_coord, a_coord, i_val, mat_tag, 'E4')  # E4 coordinates 17
+                voxel_db[v_count, 14] = \
+                    Tetra(ec, a_coord, d_coord, i_val, mat_tag, 'E1')  # E1 coordinates 14
+                voxel_db[v_count, 15] = \
+                    Tetra(ec, d_coord, h_coord, i_val, mat_tag, 'E2')  # E2 coordinates 15
+                voxel_db[v_count, 16] = \
+                    Tetra(ec, h_coord, e_coord, i_val, mat_tag, 'E3')  # E3 coordinates 16
+                voxel_db[v_count, 17] = \
+                    Tetra(ec, e_coord, a_coord, i_val, mat_tag, 'E4')  # E4 coordinates 17
 
                 # Front Tetras
-                voxel_db[v_count, 18] = Tetra(fc, d_coord, c_coord, i_val, mat_tag, 'F1')  # F1 coordinates 18
-                voxel_db[v_count, 19] = Tetra(fc, c_coord, g_coord, i_val, mat_tag, 'F2')  # F2 coordinates 19
-                voxel_db[v_count, 20] = Tetra(fc, g_coord, h_coord, i_val, mat_tag, 'F3')  # F3 coordinates 20
-                voxel_db[v_count, 21] = Tetra(fc, h_coord, d_coord, i_val, mat_tag, 'F4')  # F4 coordinates 21
+                voxel_db[v_count, 18] = \
+                    Tetra(fc, d_coord, c_coord, i_val, mat_tag, 'F1')  # F1 coordinates 18
+                voxel_db[v_count, 19] = \
+                    Tetra(fc, c_coord, g_coord, i_val, mat_tag, 'F2')  # F2 coordinates 19
+                voxel_db[v_count, 20] = \
+                    Tetra(fc, g_coord, h_coord, i_val, mat_tag, 'F3')  # F3 coordinates 20
+                voxel_db[v_count, 21] = \
+                    Tetra(fc, h_coord, d_coord, i_val, mat_tag, 'F4')  # F4 coordinates 21
 
                 # Back Tetras
-                voxel_db[v_count, 22] = Tetra(bc, b_coord, a_coord, i_val, mat_tag, 'B1')  # B1 coordinates 22
-                voxel_db[v_count, 23] = Tetra(bc, a_coord, e_coord, i_val, mat_tag, 'B2')  # B2 coordinates 23
-                voxel_db[v_count, 24] = Tetra(bc, e_coord, f_coord, i_val, mat_tag, 'B3')  # B3 coordinates 24
-                voxel_db[v_count, 25] = Tetra(bc, f_coord, b_coord, i_val, mat_tag, 'B4')  # B4 coordinates 25
+                voxel_db[v_count, 22] = \
+                    Tetra(bc, b_coord, a_coord, i_val, mat_tag, 'B1')  # B1 coordinates 22
+                voxel_db[v_count, 23] = \
+                    Tetra(bc, a_coord, e_coord, i_val, mat_tag, 'B2')  # B2 coordinates 23
+                voxel_db[v_count, 24] = \
+                    Tetra(bc, e_coord, f_coord, i_val, mat_tag, 'B3')  # B3 coordinates 24
+                voxel_db[v_count, 25] = \
+                    Tetra(bc, f_coord, b_coord, i_val, mat_tag, 'B4')  # B4 coordinates 25
 
                 v_count = v_count + 1
 
@@ -229,12 +286,18 @@ def add_centroid():
     g_coord = numpy.zeros((voxel_n, 24), dtype=object)
     for vc in range(voxel_n):
         for i in range(24):
-            gx = (voxel_db[vc, i + 2].p1.x + voxel_db[vc, i + 2].p2.x + voxel_db[vc, i + 2].p3.x + voxel_db[
-                vc, i + 2].p4.x) / 4
-            gy = (voxel_db[vc, i + 2].p1.y + voxel_db[vc, i + 2].p2.y + voxel_db[vc, i + 2].p3.y + voxel_db[
-                vc, i + 2].p4.y) / 4
-            gz = (voxel_db[vc, i + 2].p1.z + voxel_db[vc, i + 2].p2.z + voxel_db[vc, i + 2].p3.z + voxel_db[
-                vc, i + 2].p4.z) / 4
+            gx = (voxel_db[vc, i + 2].p1.x
+                  + voxel_db[vc, i + 2].p2.x
+                  + voxel_db[vc, i + 2].p3.x
+                  + voxel_db[vc, i + 2].p4.x) / 4
+            gy = (voxel_db[vc, i + 2].p1.y
+                  + voxel_db[vc, i + 2].p2.y
+                  + voxel_db[vc, i + 2].p3.y
+                  + voxel_db[vc, i + 2].p4.y) / 4
+            gz = (voxel_db[vc, i + 2].p1.z
+                  + voxel_db[vc, i + 2].p2.z
+                  + voxel_db[vc, i + 2].p3.z
+                  + voxel_db[vc, i + 2].p4.z) / 4
             g_coord[vc, i] = Coordinate(gx, gy, gz)
 
 
@@ -357,8 +420,8 @@ def calc_surface_area():
                 if side_exposed[i, j, k] != 0:
                     for m in range(2, 26):
                         if voxel_db[d, m].mat != 0:
-                            area_sum = area_sum + dicsurfarea.func(voxel_db[d, m].pos, voxel_db, d, nx, ny, dx,
-                                                                   voxel_db[d, m].mat)
+                            area_sum = area_sum + dict_surf_area.func(voxel_db[d, m].pos, voxel_db, d, nx, ny, dx,
+                                                                      voxel_db[d, m].mat)
                 d = d + 1
     print("Tetra Area = ", area_sum)
 
@@ -447,27 +510,46 @@ def main():
     cy = int(ny / 2)
     cz = int(nz / 2)
     calculate_surface_area = True
-    use_visualization = True
     calculate_volume = True
     tetra_mode = True
+    triangle_smooth_t = threading.Thread(target=triangle_smoothening)
+    create_matrix_t = threading.Thread(target=create_matrix(decimal))
+    add_centroid_t = threading.Thread(target=add_centroid)
+    calc_surf_area_t = threading.Thread(target=calc_surface_area)
+    calc_vol_t = threading.Thread(target=calc_volume)
 
     # runs the methods declared above
     build_figure(cx, cy, cz)
     smoothening()  # phase 1
     remove_exposed()  # phase 2
     recounting()  # phase 3
+    create_matrix_t.start()
     create_matrix(decimal)  # phase 4
+    create_matrix_t.join()
+    add_centroid_t.start()
     add_centroid()  # phase 4
+    add_centroid_t.join()
     if tetra_mode is True:
+        triangle_smooth_t.start()
         triangle_smoothening()  # phase 2
+        triangle_smooth_t.join()
     if calculate_surface_area is True:
+        calc_surf_area_t.start()
         calc_surface_area()  # phase 5
+        calc_surf_area_t.join()
     if calculate_volume is True:
+        calc_vol_t.start()
         calc_volume()  # phase 5
+        calc_vol_t.join()
+
+
+# multipthreading
+if __name__ == "__main__":
+    use_visualization = True
+    main_thread = threading.Thread(target=main())
+    main_thread.start()
+    main()
+    main_thread.join()
     print_val()  # phase 6
     if use_visualization is True:
         visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
-
-
-if __name__ == "__main__":
-    main()

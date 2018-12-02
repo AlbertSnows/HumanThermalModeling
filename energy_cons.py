@@ -3,7 +3,7 @@ import faulthandler
 import numpy
 import matplotlib.pyplot as pyplot
 import math
-import Ellipsoid as Ellipse
+import ellipsoid_optimized_full as Ellipse
 import Test3D as Vox
 import Implicit_steady_state_heat_transfer_solver as steadyStateHeatTransfer
 # import sys

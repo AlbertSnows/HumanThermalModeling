@@ -1,4 +1,4 @@
-import Ellipsoid as ellipse
+import ellipsoid_optimized_full as ellipse
 import numpy as np
 import matplotlib
 #matplotlib.use('Agg')

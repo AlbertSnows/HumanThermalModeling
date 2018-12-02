@@ -1,7 +1,7 @@
 import numpy as np
 import math as mt
 #from numpy import linalg as la
-import Ellipsoid as ellipse
+import ellipsoid_optimized_full as ellipse
 import scipy.sparse as sp
 import sys
 import faulthandler; faulthandler.enable()

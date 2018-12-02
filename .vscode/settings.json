@@ -1,0 +1,12 @@
+{
+    "python.pythonPath": "C:\\Users\\Ultrabook\\AppData\\Local\\Programs\\Python\\Python36\\python.exe",
+    "python.linting.pylintArgs": [
+        "--extension-pkg-whitelist=numpy",
+        "--extension-pkg-whitelist=vtk",
+        "--extension-pkg-whitelist=matplotlib",
+        "--errors-only"
+    ],
+    "python.linting.pylintEnabled": false,
+    "python.linting.enabled": true,
+    "python.linting.mypyEnabled": true
+}

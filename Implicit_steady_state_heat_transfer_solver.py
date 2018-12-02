@@ -2,7 +2,7 @@ import faulthandler
 import sys
 import numpy
 import scipy.sparse.linalg as spla
-import Ellipsoid as Ellipse
+import ellipsoid_optimized_full as Ellipse
 import ua_matrix_generator as ua_m
 
 # import scipy.sparse as sp
