@@ -492,6 +492,7 @@ nx = int(2 * a / dx + ne)
 ny = int(2 * b / dy + ne)
 nz = int(2 * c / dz + ne)
 count = 0
+<<<<<<< HEAD
 voxel = numpy.zeros((nx, ny, nz), dtype=int)
 voxel_n = nx * ny * nz
 voxel_db = numpy.empty((voxel_n, 26), dtype=object)
@@ -541,6 +542,26 @@ def main():
 
 
 # multipthreading
+=======
+
+# builds sphere
+for i in range(nx):
+    for j in range(ny):
+        for k in range(nz):
+            voxel_count[i, j, k] = count
+            count = count + 1
+            if (((i - cx) / (a / dx)) ** 2) + (((j - cy) / (b / dy)) ** 2) + (((k - cz) / (c / dz)) ** 2) <= 1:
+                # if(i>(0.5*a/dx) and i<2*a/(dx) and j>(0.5*b/dx) and j<2*b/dx and k>0.5*c/dz and k<2*c/dz):
+                voxel[i, j, k] = 1
+
+# runs the methods declared above
+side_exposed = smoothening() #phase 1 
+remove_exposed(side_exposed) #phase 2
+voxel_n = recounting() #phase 3
+create_matrix(voxel_n) #phase 4
+
+# multiprocessing - needs fix, prints multiple times
+>>>>>>> 8840e49bda04457edd9e58574292447bbcd7d1ca
 if __name__ == "__main__":
     use_visualization = True
     # phase0 = multiprocessing.Process(target=main())
