@@ -560,7 +560,7 @@ if __name__ == "__main__":
     main_thread.start()
     main()
     main_thread.join()
-    print_val()  # phase 6
+    print_val()
 
     if use_visualization is True:
         visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
