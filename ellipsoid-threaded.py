@@ -1,7 +1,7 @@
 import math
 import numpy
 import dictionary_surfacearea as dict_surf_area
-import visualization
+#import visualization
 import timeit
 import threading
 
@@ -26,10 +26,11 @@ class Tetra:
         self.pos = position
 
 
+# builds the sphere
 def build_figure(cx, cy, cz):
     global count
     global voxel_count
-    # builds figure
+
     for i in range(nx):
         for j in range(ny):
             for k in range(nz):
@@ -412,6 +413,9 @@ def triangle_smoothening():
 # Calculate the surface area
 def calc_surface_area():
     global area_sum
+    global actualarea
+    global voxelarea
+
     d = 0
     area_sum = 0.0
     for i in range(nx):
@@ -423,7 +427,6 @@ def calc_surface_area():
                             area_sum = area_sum + dict_surf_area.func(voxel_db[d, m].pos, voxel_db, d, nx, ny, dx,
                                                                       voxel_db[d, m].mat)
                 d = d + 1
-    print("Tetra Area = ", area_sum)
 
     voxelarea = float(0)
     for i in range(nx):
@@ -432,15 +435,14 @@ def calc_surface_area():
                 if voxel[i, j, k] == 1:
                     voxelarea = side_exposed[i, j, k] + voxelarea
     actualarea = float(4 * math.pi * (((a * b) ** 1.6 + (a * c) ** 1.6 + (b * c) ** 1.6) / 3.0) ** (1 / 1.6))
-    print("Actual Area = ", actualarea)
     voxelarea = voxelarea * dx * dx
-    print("voxel area = ", voxelarea)
-
 
 # Calculate volume
 def calc_volume():
     global tetra_volume
     global voxel_volume
+    global actualvolume
+
     volume = 0
     # print("vc is", vc)
     for vc in range(voxel_n):
@@ -452,8 +454,7 @@ def calc_volume():
         raise ValueError('Error, 0 volume!')
 
     tetra_volume = volume * dx * dy * dz / 24
-    print("\ntetra volume = ", tetra_volume)
-
+    
     voxel_volume = float(0)
     for i in range(nx):
         for j in range(ny):
@@ -461,18 +462,25 @@ def calc_volume():
                 if voxel[i, j, k] == 1:
                     voxel_volume = voxel_volume + dx * dy * dz
 
-    print("voxel volume = ", voxel_volume)
     actualvolume = 4 / 3 * math.pi * a * b * c
-    print("actual volume = ", actualvolume, "\n")
 
 
 # stops timer and displays the calculated values
 def print_val():
     stop = timeit.default_timer()
+    print("Tetra Area = ", area_sum)
+    print("Actual Area = ", actualarea)
+    print("voxel area = ", voxelarea)
+
+    print("\ntetra volume = ", tetra_volume)
+    print("voxel volume = ", voxel_volume)
+    print("actual volume = ", actualvolume, "\n")
+
     print("dx = ", dx, "time = ", stop - start, "seconds")
     print("domain size =", voxel_n * 24)
     print("matrix size =", voxel_n * 24 * voxel_n * 24)
     print("Completed Successfully.")
+    print("DATA: ", stop - start, "seconds")
 
 
 # Steady State Heat Transfer Solver
@@ -483,12 +491,12 @@ def print_val():
 # declares variables and starts the program
 # ----------------------------------------------
 ne = 3
-a = 1
-b = 1
-c = 1
-dx = 0.15
-dy = 0.15
-dz = 0.15
+a = 2.0
+b = 2.0
+c = 2.0
+dx = 0.05
+dy = 0.05
+dz = 0.05
 nx = int(2 * a / dx + ne)
 ny = int(2 * b / dy + ne)
 nz = int(2 * c / dz + ne)
@@ -518,38 +526,42 @@ def main():
     calc_surf_area_t = threading.Thread(target=calc_surface_area)
     calc_vol_t = threading.Thread(target=calc_volume)
 
-    # runs the methods declared above
-    build_figure(cx, cy, cz)
-    smoothening()  # phase 1
-    remove_exposed()  # phase 2
-    recounting()  # phase 3
-    create_matrix_t.start()
-    create_matrix(decimal)  # phase 4
+    build_figure(cx, cy, cz) # phase 1
+    smoothening()  # phase 2
+    remove_exposed()  # phase 3
+    recounting()  # phase 4
+
+    # parallelized matrix calculation
+    create_matrix_t.start() 
+    create_matrix(decimal)
     create_matrix_t.join()
-    add_centroid_t.start()
-    add_centroid()  # phase 4
+    
+    add_centroid_t.start() # phase 5
+    add_centroid() 
     add_centroid_t.join()
+    
     if tetra_mode is True:
-        triangle_smooth_t.start()
-        triangle_smoothening()  # phase 2
+        triangle_smooth_t.start() # phase 6
+        triangle_smoothening()
         triangle_smooth_t.join()
     if calculate_surface_area is True:
-        calc_surf_area_t.start()
-        calc_surface_area()  # phase 5
+        calc_surf_area_t.start() # phase 7
+        calc_surface_area()  
         calc_surf_area_t.join()
     if calculate_volume is True:
-        calc_vol_t.start()
-        calc_volume()  # phase 5
+        calc_vol_t.start() # phase 8
+        calc_volume()
         calc_vol_t.join()
-
 
 # multipthreading
 if __name__ == "__main__":
-    use_visualization = True
+    print("Processing...")
+    use_visualization = False
     main_thread = threading.Thread(target=main())
     main_thread.start()
     main()
     main_thread.join()
-    print_val()  # phase 6
-    if use_visualization is True:
-        visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
+    print_val()
+
+    #if use_visualization is True:
+    #    visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
