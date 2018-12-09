@@ -1,6 +1,6 @@
 import numpy as np
 import math as mt
-import visualization as v
+#import visualization as v
 import dictionary_surfacearea as dicsurfarea
 import timeit as timeit
 
@@ -22,11 +22,11 @@ class tetra:
         self.pos = position
 
 decimal = 5
-a = 2.1
-b = 2.1
-c = 2.1
+a = 2.0
+b = 2.0
+c = 2.0
 #R = 0.1
-dx = dy = dz = 0.06
+dx = dy = dz = 0.05
 dr = mt.sqrt(dx**2 + dy**2 + dz**2)
 
 # 1 for Yes 0 for No
@@ -344,7 +344,7 @@ if(surfaceareacalc == 1):
                 if(side_exposed[i,j,k] != 0):
                     for m in range(2,26):
                         if(voxel_db[d,m].mat != 0):
-                            areasum1 = areasum1 + dicsurfarea.func(voxel_db[d,m].pos,voxel_db,d,nx,ny,nz,dx,voxel_db[d,m].mat)
+                            areasum1 = areasum1 + dicsurfarea.func(voxel_db[d,m].pos,voxel_db,d,nx,ny,dx,voxel_db[d,m].mat)
                 d = d + 1
     print("Tetra Area = ", areasum1)
     
@@ -387,6 +387,7 @@ stop = timeit.default_timer()
 print("dx = ",dx,"time = ",stop-start,"seconds")
 print("domain size =",voxel_n*24)
 print("matrix size =",voxel_n*24*voxel_n*24)
+print("DATA: ", stop - start, "seconds")
 
 # Steady State Heat Transfer Solver
 

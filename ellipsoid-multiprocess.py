@@ -1,7 +1,7 @@
 import math
 import numpy
 import dictionary_surfacearea as dict_surface_area
-import visualization
+#import visualization
 import timeit
 import multiprocessing
 
@@ -473,6 +473,7 @@ def print_val():
     print("domain size =", voxel_n * 24)
     print("matrix size =", voxel_n * 24 * voxel_n * 24)
     print("Completed Successfully.")
+    print("DATA: ", stop - start, "seconds")
 
 
 # Steady State Heat Transfer Solver
@@ -483,12 +484,12 @@ def print_val():
 # declares variables and starts the program
 # ----------------------------------------------
 ne = 3
-a = 1
-b = 1
-c = 1
-dx = 0.15
-dy = 0.15
-dz = 0.15
+a = 2.0
+b = 2.0
+c = 2.0
+dx = 0.05
+dy = 0.05
+dz = 0.05
 nx = int(2 * a / dx + ne)
 ny = int(2 * b / dy + ne)
 nz = int(2 * c / dz + ne)
@@ -552,5 +553,5 @@ if __name__ == "__main__":
     main()
     main_thread.join()
     print_val()  # phase 6
-    if use_visualization is True:
-        visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
+    #if use_visualization is True:
+    #    visualization.visualize(voxel_db, side_exposed, nx, ny, nz)
